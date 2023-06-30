@@ -18,7 +18,7 @@ class Evaluator{
         logThroughput.WriteLine("time,num");
         logThroughput.Close();
         logCrash = new StreamWriter("logCrash.csv");
-        logCrash.WriteLine("time,num");
+        logCrash.WriteLine("time,num,my_speed");
         logCrash.Close();
         logDistance = new StreamWriter("logDistance.csv");
         logDistance.WriteLine("time,x,y,id,speed");
@@ -60,12 +60,12 @@ class Evaluator{
         return ThroughCars;
     }
 
-    public int addCrashCars(double time){
+    public int addCrashCars(double time, double my_speed){
         NumCrash++;
         this.Time = time;
         //Debug.Log("Crash cars: " + NumCrash.ToString() + " at " + Time.ToString());
         logCrash = new StreamWriter("logCrash.csv", true);
-        logCrash.WriteLine(Time.ToString() + "," + NumCrash.ToString());
+        logCrash.WriteLine(Time.ToString() + "," + NumCrash.ToString() + "," + my_speed.ToString());
         logCrash.Close();
         return NumCrash;
     }

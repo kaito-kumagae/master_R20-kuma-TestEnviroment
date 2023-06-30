@@ -19,14 +19,15 @@ public class CarInformation : MonoBehaviour
 
     public int startPositionX;
     public int[,] startPositionXList = new int[,] {{1, 2}, {0, 2}, {0, 1}};
+    public int passingCounter = 0;
 
-    void Start()
-    {
-        startPositionX = Random.Range(0, 3);
-    }
-    public void choicePositionX()
-    {
-        int twoDimensionsIndex = Random.Range(0, 2);
-        startPositionX = startPositionXList[startPositionX, twoDimensionsIndex];
-    }
+    // void Start()
+    // {
+    //     startPositionX = Random.Range(0, 3);
+    // }
+    // public void choicePositionX()
+    // {
+    //     int twoDimensionsIndex = Random.Range(0, 2);
+    //     startPositionX = startPositionXList[startPositionX, twoDimensionsIndex];
+    // }
 }

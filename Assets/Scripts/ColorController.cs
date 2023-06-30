@@ -14,17 +14,17 @@ public class ColorController : MonoBehaviour
         //b -= (speed - 5) * 10;
         //GetComponent<Renderer>().material.color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
         float m = (maxSpeed+1-minSpeed)/4;
-        if (speed < m)
+        if (speed < (m+minSpeed))
         {
             GetComponent<Renderer>().material.color = Color.red;
         }
 
-        else if (m <= speed && speed < 2*m)
+        else if ((m+minSpeed) <= speed && speed < (2*m+minSpeed))
         {
             GetComponent<Renderer>().material.color = Color.yellow;
         }
 
-        else if (2*m <= speed && speed < 3*m)
+        else if ((2*m+minSpeed) <= speed && speed < (3*m+minSpeed))
         {
             GetComponent<Renderer>().material.color = Color.blue;
         }
