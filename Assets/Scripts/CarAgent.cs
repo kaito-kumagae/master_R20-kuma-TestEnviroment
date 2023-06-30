@@ -7,6 +7,8 @@ using System.Linq;
 
 public class CarAgent : Agent
 {
+    private Logger logger;
+
     public float speed = 10f;
     public float maxSpeed = 15;
     public float minSpeed = 5;
@@ -33,7 +35,6 @@ public class CarAgent : Agent
     private Evaluator evaluator = Evaluator.getInstance();
 
     public int trackReward = 1;
-
     
     public GameObject frame;
     public bool changeColor = true;
@@ -107,7 +108,7 @@ public class CarAgent : Agent
 
         if (Time.realtimeSinceStartup >= testStopCount)
         {
-            PrintLog();
+            logger.PrintLog();
             Debug.Break();
         }
         
@@ -128,17 +129,6 @@ public class CarAgent : Agent
             carInformation.getRewardCarNumLog = carInformation.getRewardCarNum;
             carInformation.getRewardCarNum = 0;
         }
-    }
-
-    void PrintLog()
-    {
-        Debug.Log("throughput : " + carInformation.throughCarNum);
-        //Debug.Log("total car num : " + carInformation.totalCarNum);
-        //Debug.Log("存在する車の数 :  " + carInformation.carNum);
-        Debug.Log("crash : " + (evaluator.getNumCrash()-carInformation.crashCarNumLog));
-        //Debug.Log("crash rate : " + (((float)evaluator.getNumCrash()-carInformation.crashCarNumLog) / (float)carInformation.carNum));
-        Debug.Log("passing : " + carInformation.passingCounter);
-        Debug.Log("-------------------------------");
     }
 
     private void MoveCar(float horizontal, float vertical, float dt)
