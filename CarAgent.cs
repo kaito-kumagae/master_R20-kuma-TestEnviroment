@@ -8,6 +8,8 @@ using System.Linq;
 public class CarAgent : Agent
 {
     private Logger logger;
+    private Initialization initialization;
+    private Movement movement;
 
     public float speed = 10f;
     public float maxSpeed = 15;
@@ -20,7 +22,7 @@ public class CarAgent : Agent
     public bool resetOnCollision = true;
 
     public int id = 0;
-    private int new_id = 0;
+    public int new_id = 0;
 
     private Transform _track, _prev_track;
 
@@ -29,8 +31,8 @@ public class CarAgent : Agent
     public int generateInterval = 300;
     public float noise = 0.0f;
 
-    private Vector3 _initPosition;
-    private Quaternion _initRotation;
+    public Vector3 _initPosition;
+    public Quaternion _initRotation;
     //private int _notMoveCount = 0;
     private Evaluator evaluator = Evaluator.getInstance();
 
@@ -58,21 +60,12 @@ public class CarAgent : Agent
     public List<int> detectedFrontCarIdList = new List<int>(5);
     public bool countPassing = true;
 
-    private Movement movement;
-
-    void Start()
-    {
-        logger = new Logger(carInformation);
-        movement = new Movement(this);
-    }
-
     public override void Initialize()
     {
-        GetTrackIncrement();
-        _initPosition = transform.localPosition;
-        _initRotation = transform.localRotation;
-        time = 0;
-        new_id = 0;
+        initialization = new Initialization(this);
+        logger = new Logger(carInformation);
+        movement = new Movement(this);
+        initialization.Initialize();
     }
 
     void Update()
@@ -599,7 +592,7 @@ public class CarAgent : Agent
         }
     }
 
-    private float GetTrackIncrement()
+    public float GetTrackIncrement()
     {
         float reward = 0;
         var carCenter = transform.position + Vector3.up;
