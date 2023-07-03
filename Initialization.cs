@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Initialization : MonoBehaviour
+public class Initialization
 {
     private CarAgent carAgent;
 
@@ -13,8 +13,9 @@ public class Initialization : MonoBehaviour
 
     public void Initialize()
     {
-        carAgent._initPosition = transform.localPosition;
-        carAgent._initRotation = transform.localRotation;
+        carAgent.GetTrackIncrement();
+        carAgent._initPosition = carAgent.transform.localPosition;
+        carAgent._initRotation = carAgent.transform.localRotation;
         carAgent.time = 0;
         carAgent.new_id = 0;
     }
