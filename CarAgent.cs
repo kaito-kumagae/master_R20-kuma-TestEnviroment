@@ -8,6 +8,7 @@ using System.Linq;
 public class CarAgent : Agent
 {
     private Logger logger;
+    private Initialization initialization;
 
     public float speed = 10f;
     public float maxSpeed = 15;
@@ -69,10 +70,7 @@ public class CarAgent : Agent
     public override void Initialize()
     {
         GetTrackIncrement();
-        _initPosition = transform.localPosition;
-        _initRotation = transform.localRotation;
-        time = 0;
-        new_id = 0;
+        initialization.Initialize();
     }
 
     void Update()
