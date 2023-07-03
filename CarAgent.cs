@@ -35,10 +35,10 @@ public class CarAgent : Agent
     private Evaluator evaluator = Evaluator.getInstance();
 
     public int trackReward = 1;
-    
+
     public GameObject frame;
     public bool changeColor = true;
-    
+
     public bool distancePenalty = true;
     public float[] PenaltyRewards = new float[8];
 
@@ -58,6 +58,14 @@ public class CarAgent : Agent
     public List<int> detectedFrontCarIdList = new List<int>(5);
     public bool countPassing = true;
 
+    private Movement movement;
+
+    void Start()
+    {
+        logger = new Logger(carInformation);
+        movement = new Movement(this);
+    }
+
     public override void Initialize()
     {
         GetTrackIncrement();
@@ -69,7 +77,7 @@ public class CarAgent : Agent
 
     void Update()
     {
-        
+
         if(!generateNew || id > 1) return;
         //Debug.Log(time);
         if(time > generateInterval && carInformation.carNum < limitCarNum)
@@ -85,8 +93,8 @@ public class CarAgent : Agent
             gameObject.speed = Random.Range(minSpeed, maxSpeed+1);
             gameObject.getReward = true;
             gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
-            //Debug.Log("Generaiterate GenerateInterval");     
-            carInformation.carNum++; 
+            //Debug.Log("Generaiterate GenerateInterval");
+            carInformation.carNum++;
             carInformation.totalCarNum++;
             time = 0;
         }
@@ -111,7 +119,7 @@ public class CarAgent : Agent
             logger.PrintLog();
             Debug.Break();
         }
-        
+
         if (carInformation.rewardTime == carInformation.rewardInterval)
         {
             carInformation.reward = carInformation.throughCarNum/carInformation.carNum;
@@ -121,8 +129,8 @@ public class CarAgent : Agent
             carInformation.crashCarNumLog = evaluator.getNumCrash();
             carInformation.throughCarNum = 0;
             carInformation.passingCounter = 0;
-        }    
-    
+        }
+
         if (carInformation.getRewardCarNum >= carInformation.carNum)
         {
             carInformation.rewardTime = 0;
@@ -136,16 +144,16 @@ public class CarAgent : Agent
         if(generateNew){
             time++;
         }
-        
-        
-        if (carInformation.rewardTime < carInformation.rewardInterval) 
-        { 
-            if (! getReward) 
+
+
+        if (carInformation.rewardTime < carInformation.rewardInterval)
+        {
+            if (! getReward)
             {
                 getReward = true;
-            }  
+            }
         }
-    
+
         float distance = speed * vertical;
         transform.Translate(distance * dt * Vector3.forward);
 
@@ -167,7 +175,7 @@ public class CarAgent : Agent
         {
             GetThroughPutReward();
         }
-        
+
         float horizontal = vectorAction[0];
         float vertical = vectorAction[1];
         vertical = Mathf.Clamp(vertical, -1.0f, 1.0f);
@@ -177,7 +185,7 @@ public class CarAgent : Agent
         MoveCar(horizontal, vertical, Time.fixedDeltaTime);
 
         float reward = GetTrackIncrement();
-        
+
         var moveVec = transform.position - lastPos;
         /*
         if(Vector3.Distance(lastPos, transform.position) < 0.05f){
@@ -252,7 +260,7 @@ public class CarAgent : Agent
             foundCarForward = true;
             if (countPassing == true)
             {
-                addElement(detectedId, otherAgentPosition); 
+                addElement(detectedId, otherAgentPosition);
             }
         }
         else
@@ -281,8 +289,8 @@ public class CarAgent : Agent
             foundCarForward = true;
             if (countPassing == true)
             {
-                addElement(detectedId, otherAgentPosition); 
-            } 
+                addElement(detectedId, otherAgentPosition);
+            }
         }
         else
         {
@@ -310,7 +318,7 @@ public class CarAgent : Agent
             foundCarForward = true;
             if (countPassing == true)
             {
-                addElement(detectedId, otherAgentPosition); 
+                addElement(detectedId, otherAgentPosition);
             }
         }
         else
@@ -341,7 +349,7 @@ public class CarAgent : Agent
             {
                 removeElement(detectedId);
             }
-            
+
         }
         else
         {
@@ -414,7 +422,7 @@ public class CarAgent : Agent
             observations.Add(0);
         }
         //observations.Add(ObserveRay(0f, .5f, 90f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(0f, .5f, 90f, out diff, out tag, out detectedId, out otherAgentPosition); //right 
+        distance = ObserveRay(0f, .5f, 90f, out diff, out tag, out detectedId, out otherAgentPosition); //right
         DistancePenalty(distance, PenaltyRewards[6], 0.2f);
         observations.Add(distance);
         //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
@@ -483,9 +491,9 @@ public class CarAgent : Agent
         detectedId = -1;
         otherAgentPosition = Vector3.zero;
         var tf = transform;
-    
+
         // Get the start position of the ray
-        var raySource = tf.position + Vector3.up / 2f; 
+        var raySource = tf.position + Vector3.up / 2f;
         const float RAY_DIST = 5f;
         var position = raySource + tf.forward * z + tf.right * x;
 
@@ -567,9 +575,9 @@ public class CarAgent : Agent
     //     this.detectedFrontCarIdList.RemoveAt(this.detectedFrontCarIdList.Count - 1);
     // }
 
-    private void ChoiceDiff(Vector3 diff, ref List<float> observations) 
+    private void ChoiceDiff(Vector3 diff, ref List<float> observations)
     {
-        if (diffXYZ[0]) 
+        if (diffXYZ[0])
         {
             observations.Add(diff.x);
         }
@@ -624,7 +632,7 @@ public class CarAgent : Agent
                     {
                         if (hit.collider.tag == "CheckPoint")
                         {
-                            carInformation.throughCarNum++; // 前進でチェックポイント踏んだらカウント  
+                            carInformation.throughCarNum++; // 前進でチェックポイント踏んだらカウント
                         }
                         reward = trackReward;
                         if (hit.collider.tag == "endTile")
@@ -703,7 +711,7 @@ public class CarAgent : Agent
                 var otherAgent = (CarAgent)other.gameObject.GetComponent(typeof(CarAgent));
                 if((this.id < otherAgent.id) && (isNot01(otherAgent.id)))
                 {
-                    if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f)) 
+                    if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f))
                     {
                         var newHit = hit.transform;
                         if (newHit.GetComponent<Collider>().tag == "startTile")
@@ -716,7 +724,7 @@ public class CarAgent : Agent
                             }
                         }
 
-                        else 
+                        else
                         {
                             evaluator.addCrashCars(Time.realtimeSinceStartup,speed);
                             if(generateNew)
