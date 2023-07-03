@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Logger : MonoBehaviour
+public class Logger
 {
     private CarInformation carInformation;
     private Evaluator evaluator = Evaluator.getInstance();
