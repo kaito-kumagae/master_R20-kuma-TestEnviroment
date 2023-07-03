@@ -154,13 +154,7 @@ public class CarAgent : Agent
             }
         }
 
-        float distance = speed * vertical;
-        transform.Translate(distance * dt * Vector3.forward);
-
-        float rotation = horizontal * torque * 90f;
-        transform.Rotate(0f, rotation * dt, 0f);
-        prevHorizontal = horizontal;
-        prevVertical = vertical;
+        movement.MoveCar(horizontal, vertical, dt);
     }
     private List<float> prev_observations;
 
