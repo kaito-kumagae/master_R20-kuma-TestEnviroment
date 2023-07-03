@@ -155,8 +155,6 @@ public class CarAgent : Agent
         }
 
         movement.MoveCar(horizontal, vertical, dt);
-        prevHorizontal = horizontal;
-        prevVertical = vertical;
     }
     private List<float> prev_observations;
 
