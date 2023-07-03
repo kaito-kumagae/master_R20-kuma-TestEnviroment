@@ -5,7 +5,12 @@ using UnityEngine;
 public class Logger : MonoBehaviour
 {
     private CarInformation carInformation;
+    private Evaluator evaluator = Evaluator.getInstance();
 
+    public Logger(CarInformation carInformation)
+    {
+        this.carInformation = carInformation;
+    }
     public void PrintLog()
     {
         Debug.Log("throughput : " + carInformation.throughCarNum);
