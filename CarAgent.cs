@@ -11,60 +11,71 @@ public class CarAgent : Agent
     private Initialization initialization;
     private Movement movement;
 
+    [Header("CAR PARAMETER")]
     public float speed = 10f;
-    public float maxSpeed = 15;
     public float minSpeed = 5;
-    public float torque = 10f;
+    public float maxSpeed = 15;
+    public float torque = 1f;
     public float prevVertical = 0f;
     public float prevHorizontal = 0f;
-
-    public int score = 0;
-    public bool resetOnCollision = true;
-
     public int id = 0;
-    public int new_id = 0;
-
-    private Transform _track, _prev_track;
-
-    public int time = 0;
+    public float noise = 0.1f;
+    [Space(2)]
+    [Header("REWARD")]
+    public bool needDistanceReward = true;
+    public bool canGetCommonReward = true;
+    public int trackReward = 1;
+    public float commonRewardRate = 1;
+    public float distanceThreshold = 0.2f;
+    public float[] penaltyRewards = new float[8];
+    [Space(2)]
+    [Header("GENERATE CAR")]
     public bool generateNew = true;
+    public int time = 0;
     public int generateInterval = 300;
-    public float noise = 0.0f;
-
-    public Vector3 _initPosition;
-    public Quaternion _initRotation;
-    //private int _notMoveCount = 0;
+    [Space(2)]
+    [Header("ENVIRONMENT PARAMETER")]
+    public int limitCarNum = 300;
+    [Space(2)]
+    [Header("SWITCH")]
+    public bool resetOnCollision = true;
+    public bool changeColor = true;
+    public bool changeSpeed = true;
+    [Space(2)]
+    [Header("PASSING")]
+    public bool countPassing = true;
+    public List<int> detectedFrontCarIdList = new List<int>(5);
+    [Space(2)]
+    [Header("GAME OBJECT")]
+    public GameObject frame;
+    public CarInformation carInformation;
+    [Space(2)]
+    [Header("TEST PARAMETER")]
+    public int testStopCount = 5;
+    [Space(2)]
+    [Header("iranai")]
+    public bool[] diffXYZ = new bool[] {true, false, true};
     private Evaluator evaluator = Evaluator.getInstance();
 
-    public int trackReward = 1;
+    [HideInInspector]
+    public int new_id = 0;
+    [HideInInspector]
+    public Transform _track, _prev_track;
+    [HideInInspector]
+    public RewardCalculation rewardCalculation;
+    [HideInInspector]
+    public Vector3 _initPosition;
+    [HideInInspector]
+    public Quaternion _initRotation;
+    
 
-    public GameObject frame;
-    public bool changeColor = true;
-
-    public bool distancePenalty = true;
-    public float[] PenaltyRewards = new float[8];
-
-    public CarInformation carInformation; // すべての車の情報をもつオブジェクト
-    //private int rewardTime = 0; // 全体報酬用タイマー
-    public float rewardRate = 1;
-    private bool getReward = true;
-    //private int testCount = 0;
-    public int testStopCount = 5;
-
-    private float[] p = new float[] {-1.9f, 0f, 1.9f};
-
-    public int limitCarNum = 30;
-    public bool[] diffXYZ = new bool[] {true, false, true};
-    public bool changeSpeed = true;
-
-    public List<int> detectedFrontCarIdList = new List<int>(5);
-    public bool countPassing = true;
 
     public override void Initialize()
     {
         initialization = new Initialization(this);
         logger = new Logger(carInformation);
         movement = new Movement(this);
+        rewardCalculation = new RewardCalculation(this);
         initialization.Initialize();
     }
 
@@ -84,22 +95,12 @@ public class CarAgent : Agent
             gameObject.transform.localPosition = _initPosition;// new Vector3(p[carInformation.startPositionX], 0f, _initPosition.z);
             gameObject.transform.localRotation = _initRotation;
             gameObject.speed = Random.Range(minSpeed, maxSpeed+1);
-            gameObject.getReward = true;
+            gameObject.canGetCommonReward = true;
             gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
             //Debug.Log("Generaiterate GenerateInterval");
             carInformation.carNum++;
             carInformation.totalCarNum++;
             time = 0;
-        }
-    }
-
-    private void GetThroughPutReward()
-    {
-        if (carInformation.rewardTime >= carInformation.rewardInterval)
-        {
-            AddReward(carInformation.reward * rewardRate);
-            carInformation.getRewardCarNum++;
-            getReward = false;
         }
     }
 
@@ -141,9 +142,9 @@ public class CarAgent : Agent
 
         if (carInformation.rewardTime < carInformation.rewardInterval)
         {
-            if (! getReward)
+            if (!canGetCommonReward)
             {
-                getReward = true;
+                canGetCommonReward = true;
             }
         }
 
@@ -158,9 +159,10 @@ public class CarAgent : Agent
             CarInformationController();
         }
 
-        if (getReward)
+        if (canGetCommonReward)
         {
-            GetThroughPutReward();
+            float commonReward = rewardCalculation.CalculateCommonReward();
+            AddReward(commonReward);
         }
 
         float horizontal = vectorAction[0];
@@ -171,25 +173,14 @@ public class CarAgent : Agent
         var lastPos = transform.position;
         MoveCar(horizontal, vertical, Time.fixedDeltaTime);
 
-        float reward = GetTrackIncrement();
+        float individualReward = rewardCalculation.CalculateIndividualReward();
 
         var moveVec = transform.position - lastPos;
-        /*
-        if(Vector3.Distance(lastPos, transform.position) < 0.05f){
-            _notMoveCount += 1;
-            if(_notMoveCount > 10){
-                _notMoveCount = 0;
-                SetReward(-1f);
-                EndEpisode();
-            }
-        }
-        //*/
         float angle = Vector3.Angle(moveVec, _track.forward);
-        //float bonus = (1f - angle / 90f) * Mathf.Clamp01(vertical) * Time.fixedDeltaTime;
-        //float bonus = (1f - angle / 90f) * Mathf.Clamp01(Mathf.Abs(vertical)) * Time.fixedDeltaTime;
-        //float bonus = ((1f - angle / 90f) + vertical) * Time.fixedDeltaTime;
-        float bonus = ((1f - angle / 90f) * Mathf.Clamp01(Mathf.Max(0, vertical)) + Mathf.Min(0, vertical)) * Time.fixedDeltaTime;
-        AddReward(bonus + reward);
+        float angleReward = rewardCalculation.CalculateAngleReward(moveVec, angle, vertical);
+
+        AddReward(individualReward + angleReward);
+
         if(foundCarBackward && !foundCarSide)
         {
             evaluator.addBehavior(Time.realtimeSinceStartup, (int)speed, false, vectorAction);
@@ -198,8 +189,6 @@ public class CarAgent : Agent
         {
             evaluator.addBehavior(Time.realtimeSinceStartup, (int)speed, true, vectorAction);
         }
-
-        score += (int)reward;
 
         evaluator.addFullData(Time.frameCount, transform.position, prev_observations, horizontal, vertical);
     }
@@ -222,9 +211,9 @@ public class CarAgent : Agent
         foundCarSide = false;
 
         observations.Add(angle / 180f);
-        //float speed, torque;
+        
         string tag;
-        //Quaternion rotation;
+        
         Vector3 diff;
 
         int detectedId;
@@ -232,14 +221,16 @@ public class CarAgent : Agent
         Vector3 otherAgentPosition;
 
         float distance;
+        float distanceReward;
 
         //vectorSensor.AddObservation(ObserveRay(1.5f, .5f, 25f, out speed, out torque, out rotation, out tag));
         distance = ObserveRay(1.5f, .5f, 25f, out diff, out tag, out detectedId, out otherAgentPosition); //right forward
-        DistancePenalty(distance, PenaltyRewards[0], 0.2f);
+        if (needDistanceReward == true)
+        {
+            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[0], 0.2f);
+            AddReward(distanceReward);
+        }
         observations.Add(distance);
-        //vectorSensor.AddObservation((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
-        //vectorSensor.AddObservation(speed);
-        //vectorSensor.AddObservation(torque);
         ChoiceDiff(diff, ref observations);
         if (tag == "car")
         {
@@ -264,7 +255,11 @@ public class CarAgent : Agent
         }
         //vectorSensor.AddObservation(ObserveRay(1.5f, 0f, 0f, out speed, out torque, out rotation, out tag));
         distance = ObserveRay(1.5f, 0f, 0f, out diff, out tag, out detectedId, out otherAgentPosition); //forward
-        DistancePenalty(distance, PenaltyRewards[1], 0.2f);
+        if (needDistanceReward == true)
+        {
+            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[1], 0.2f);
+            AddReward(distanceReward);
+        }
         observations.Add(distance);
         //vectorSensor.AddObservation((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
         //vectorSensor.AddObservation(speed);
@@ -293,7 +288,11 @@ public class CarAgent : Agent
         }
         //observations.Add(ObserveRay(1.5f, -.5f, -25f, out speed, out torque, out rotation, out tag));
         distance = ObserveRay(1.5f, -.5f, -25f, out diff, out tag, out detectedId, out otherAgentPosition); //left forward
-        DistancePenalty(distance, PenaltyRewards[2], 0.2f);
+        if (needDistanceReward == true)
+        {
+            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[2], 0.2f);
+            AddReward(distanceReward);
+        }
         observations.Add(distance);
         //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
         //observations.Add(speed);
@@ -322,7 +321,11 @@ public class CarAgent : Agent
         }
         //observations.Add(ObserveRay(-1.5f, .5f, 155f, out speed, out torque, out rotation, out tag));
         distance = ObserveRay(-1.5f, .5f, 155f, out diff, out tag, out detectedId, out otherAgentPosition); //right backward
-        DistancePenalty(distance, PenaltyRewards[3], 0.2f);
+        if (needDistanceReward == true)
+        {
+            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[3], 0.2f);
+            AddReward(distanceReward);
+        }
         observations.Add(distance);
         //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
         //observations.Add(speed);
@@ -352,7 +355,11 @@ public class CarAgent : Agent
         }
         //observations.Add(ObserveRay(-1.5f, 0, 180f, out speed, out torque, out rotation, out tag));
         distance = ObserveRay(-1.5f, 0f, 180f, out diff, out tag, out detectedId, out otherAgentPosition); //backward
-        DistancePenalty(distance, PenaltyRewards[4], 0.2f);
+        if (needDistanceReward == true)
+        {
+            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[4], 0.2f);
+            AddReward(distanceReward);
+        }
         observations.Add(distance);
         //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
         //observations.Add(speed);
@@ -381,7 +388,11 @@ public class CarAgent : Agent
         }
         //observations.Add(ObserveRay(-1.5f, -.5f, -155f, out speed, out torque, out rotation, out tag));
         distance = ObserveRay(-1.5f, -.5f, -155f, out diff, out tag, out detectedId, out otherAgentPosition); //left backward
-        DistancePenalty(distance, PenaltyRewards[5], 0.2f);
+        if (needDistanceReward == true)
+        {
+            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[5], 0.2f);
+            AddReward(distanceReward);
+        }
         observations.Add(distance);
         //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
         //observations.Add(speed);
@@ -410,7 +421,11 @@ public class CarAgent : Agent
         }
         //observations.Add(ObserveRay(0f, .5f, 90f, out speed, out torque, out rotation, out tag));
         distance = ObserveRay(0f, .5f, 90f, out diff, out tag, out detectedId, out otherAgentPosition); //right
-        DistancePenalty(distance, PenaltyRewards[6], 0.2f);
+        if (needDistanceReward == true)
+        {
+            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[6], 0.2f);
+            AddReward(distanceReward);
+        }
         observations.Add(distance);
         //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
         //observations.Add(speed);
@@ -435,7 +450,11 @@ public class CarAgent : Agent
         }
         //observations.Add(ObserveRay(0f, -.5f, -90f, out speed, out torque, out rotation, out tag));
         distance = ObserveRay(0f, -.5f, -90f, out diff, out tag, out detectedId, out otherAgentPosition); //left
-        DistancePenalty(distance, PenaltyRewards[7], 0.2f);
+        if (needDistanceReward == true)
+        {
+            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[7], 0.2f);
+            AddReward(distanceReward);
+        }
         observations.Add(distance);
         //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
         //observations.Add(speed);
@@ -578,86 +597,6 @@ public class CarAgent : Agent
         {
             observations.Add(diff.z);
         }
-    }
-
-    private void DistancePenalty(float distance, float penaltyReward, float penaltyDistance)
-    {
-        //Debug.Log("distance : " + distance);
-        if ((0 < distance) && (distance < penaltyDistance))
-        {
-            if (distancePenalty)
-            {
-                AddReward(penaltyReward);
-            }
-        }
-    }
-
-    public float GetTrackIncrement()
-    {
-        float reward = 0;
-        var carCenter = transform.position + Vector3.up;
-
-        // Find what tile I'm on
-        if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f))
-        {
-            var newHit = hit.transform;
-            // Check if the tile has changed
-            if(_track == null){
-                _prev_track = _track;
-                _track = newHit;
-            }
-            else if (newHit != _track) // 別のタイルに移動
-            {
-                var relPos = transform.position - newHit.position;
-                evaluator.addHorizontalSensor(Time.realtimeSinceStartup, relPos.x * newHit.forward.z - relPos.z * newHit.forward.x, relPos.x * newHit.forward.x - relPos.z * newHit.forward.z, this.id, this.speed);
-                if(newHit == _prev_track){ // 1回前のタイルに移動したらペナルティ
-                    reward = -1;
-                }
-                else{ // 前向きに移動していたら+1, 後ろ向きに移動していたら-1
-                    float angle = Vector3.Angle(_track.forward, newHit.position - _track.position);
-                    if (angle < 90f)
-                    {
-                        if (hit.collider.tag == "CheckPoint")
-                        {
-                            carInformation.throughCarNum++; // 前進でチェックポイント踏んだらカウント
-                        }
-                        reward = trackReward;
-                        if (hit.collider.tag == "endTile")
-                        {
-                            // EndEpisode();
-                            //transform.localPosition = new Vector3(transform.localPosition.x,_initPosition.y, _initPosition.z);
-                            transform.localPosition = new Vector3(transform.localPosition.x,0, 0);
-                            // transform.localPosition = _initPosition;
-                            // transform.localRotation = _initRotation;
-                            if (changeSpeed)
-                            {
-                                speed = Random.Range(minSpeed, maxSpeed+1);
-                                frame.GetComponent<ColorController>().ChangeColor(this.speed, maxSpeed, minSpeed);
-                            }
-                            if (countPassing == true)
-                            {
-                                this.detectedFrontCarIdList.Clear();
-                            }
-                        }
-                    }
-
-                    else
-                    {
-                        reward = -1;
-                    }
-                }
-                if (newHit.GetComponent<Collider>().tag == "startTile"){
-                    evaluator.addThroughCars(Time.realtimeSinceStartup);
-                }
-                _prev_track = _track;
-                _track = newHit;
-            }
-            else {
-                reward = -0.01f;
-            }
-        }
-
-        return reward;
     }
 
     public override void OnEpisodeBegin()

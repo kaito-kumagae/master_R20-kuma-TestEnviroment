@@ -3,78 +3,84 @@ using System.Collections.Generic;
 using MLAgents;
 using UnityEngine;
 
-public class RewardCalculation : Agent
+public class RewardCalculation
 {
-    private Evaluator evaluator;
-    private CarInformation carInformation;
     private CarAgent carAgent;
+    private CarInformation carInformation;
+    private Evaluator evaluator = Evaluator.getInstance();
 
     public RewardCalculation(CarAgent carAgent)
     {
         this.carAgent = carAgent;
+        this.carInformation = carAgent.carInformation;
     }
 
     public float CalculateIndividualReward()
     {
-        float individualReward = 0;
-        var carCenter = transform.position + Vector3.up;
+        float individualReward = 0.0f;
+        var carCenter = carAgent.transform.position + Vector3.up; 
 
         if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f))
         {
             var newHitTile = hit.transform;
 
-            if(this.carAgent._track == null)
+            if(carAgent._track == null)
             {
-                this.carAgent._prev_track = this.carAgent._track;
-                this.carAgent._track = newHitTile;
+                carAgent._prev_track = carAgent._track;
+                carAgent._track = newHitTile;
             }
-            else if (newHitTile != this.carAgent._track) // 別のタイルに移動
+            // move another tile
+            else if (newHitTile != carAgent._track)
             {
-                var relativePosition = transform.position - newHitTile.position;
-                evaluator.addHorizontalSensor(Time.realtimeSinceStartup, relativePosition.x * newHitTile.forward.z - relativePosition.z * newHitTile.forward.x, relativePosition.x * newHitTile.forward.x - relativePosition.z * newHitTile.forward.z, this.carAgent.id, this.carAgent.speed);
-                if(newHitTile == this.carAgent._prev_track)
-                { // 1回前のタイルに移動したらペナルティ
+                var relativePosition = carAgent.transform.position - newHitTile.position;
+                evaluator.addHorizontalSensor(Time.realtimeSinceStartup, relativePosition.x * newHitTile.forward.z - relativePosition.z * newHitTile.forward.x, relativePosition.x * newHitTile.forward.x - relativePosition.z * newHitTile.forward.z, carAgent.id, carAgent.speed);
+                // move previous tile
+                if(newHitTile == carAgent._prev_track)
+                {
                     individualReward = -1;
                 }
+                // moving forward
                 else
-                { // 前向きに移動していたら+1, 後ろ向きに移動していたら-1
-                    float angle = Vector3.Angle(this.carAgent._track.forward, newHitTile.position - this.carAgent._track.position);
+                {
+                    float angle = Vector3.Angle(carAgent._track.forward, newHitTile.position - carAgent._track.position);
                     if (angle < 90f)
                     {
+                        individualReward = carAgent.trackReward;
+
+                        // if the tile's tag id "CheckPoint"
                         if (hit.collider.tag == "CheckPoint")
                         {
-                            carInformation.throughCarNum++; // 前進でチェックポイント踏んだらカウント  
+                            carInformation.throughCarNum++;
                         }
-                        individualReward = this.carAgent.trackReward;
+                        
+                        // if the tile's tag id "endTile"
                         if (hit.collider.tag == "endTile")
                         {
-                            // EndEpisode();
-                            //transform.localPosition = new Vector3(transform.localPosition.x,_initPosition.y, _initPosition.z);
-                            transform.localPosition = new Vector3(transform.localPosition.x,0, 0);
-                            // transform.localPosition = _initPosition;
-                            // transform.localRotation = _initRotation;
-                            if (this.carAgent.changeSpeed)
+                            carAgent.transform.localPosition = new Vector3(carAgent.transform.localPosition.x,0, 0);
+                            if (carAgent.changeSpeed)
                             {
-                                this.carAgent.speed = Random.Range(carAgent.minSpeed, carAgent.maxSpeed+1);
-                                this.carAgent.frame.GetComponent<ColorController>().ChangeColor(this.carAgent.speed, carAgent.maxSpeed, carAgent.minSpeed);
+                                carAgent.speed = Random.Range(carAgent.minSpeed, carAgent.maxSpeed+1);
+                                carAgent.frame.GetComponent<ColorController>().ChangeColor(carAgent.speed, carAgent.maxSpeed, carAgent.minSpeed);
                             }
                             if (carAgent.countPassing == true)
                             {
-                                this.carAgent.detectedFrontCarIdList.Clear();
+                                carAgent.detectedFrontCarIdList.Clear();
                             }
                         }
                     }
+                    // moving backward
                     else
                     {
                         individualReward = -1;
                     }
                 }
+                // if the tile's tag id "startTile"
                 if (newHitTile.GetComponent<Collider>().tag == "startTile")
                 {
                     evaluator.addThroughCars(Time.realtimeSinceStartup);
                 }
-                this.carAgent._prev_track = this.carAgent._track;
-                this.carAgent._track = newHitTile;
+                carAgent._prev_track = carAgent._track;
+                carAgent._track = newHitTile;
             }
             else
             {
@@ -86,14 +92,10 @@ public class RewardCalculation : Agent
 
     public float CalculateCommonReward()
     {
-        if (carInformation.rewardTime >= carInformation.rewardInterval)
-        {
-            float commonReward = carInformation.reward * carAgent.rewardRate;
-            carInformation.getRewardCarNum++;
-            this.carAgent.getReward = false;
-            return commonReward;
-        }
-        return 0.0f;
+        float commonReward = carInformation.commonReward * carAgent.commonRewardRate;
+        carInformation.getRewardCarNum++;
+        carAgent.canGetCommonReward = false;
+        return commonReward;
     }
 
     public float CalculateAngleReward(Vector3 moveVec, float angle, float vertical)
