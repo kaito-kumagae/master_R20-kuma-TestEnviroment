@@ -12,8 +12,9 @@ public class CarInformation : MonoBehaviour
     public float throughCarNum = 0;
     public int rewardTime = 0;
     public int rewardInterval = 500;
+    public float reward = 0.0f;
 
-    public float reward = 0;
+    public float commonReward = 0;
     public int getRewardCarNum = 0;
     public int getRewardCarNumLog = 0;
 
