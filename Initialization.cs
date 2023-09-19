@@ -5,7 +5,6 @@ using UnityEngine;
 public class Initialization
 {
     private CarAgent carAgent;
-    private RewardCalculation RewardCalculation;
 
     public Initialization(CarAgent carAgent)
     {
@@ -14,7 +13,7 @@ public class Initialization
 
     public void Initialize()
     {
-        RewardCalculation.CalculateIndividualReward();
+        carAgent.rewardCalculation.CalculateIndividualReward();
         carAgent._initPosition = carAgent.transform.localPosition;
         carAgent._initRotation = carAgent.transform.localRotation;
         carAgent.time = 0;

@@ -10,56 +10,65 @@ public class CarAgent : Agent
     private Logger logger;
     private Initialization initialization;
     private Movement movement;
-    private RewardCalculation rewardCalculation;
 
+    [Header("CAR PARAMETER")]
     public float speed = 10f;
-    public float maxSpeed = 15;
     public float minSpeed = 5;
-    public float torque = 10f;
+    public float maxSpeed = 15;
+    public float torque = 1f;
     public float prevVertical = 0f;
     public float prevHorizontal = 0f;
-
-    public bool resetOnCollision = true;
-
     public int id = 0;
-    public int new_id = 0;
-
-    public Transform _track, _prev_track;
-
-    public int time = 0;
+    public float noise = 0.1f;
+    [Space(2)]
+    [Header("REWARD")]
+    public bool needDistanceReward = true;
+    public bool canGetCommonReward = true;
+    public int trackReward = 1;
+    public float commonRewardRate = 1;
+    public float distanceThreshold = 0.2f;
+    public float[] penaltyRewards = new float[8];
+    [Space(2)]
+    [Header("GENERATE CAR")]
     public bool generateNew = true;
+    public int time = 0;
     public int generateInterval = 300;
-    public float noise = 0.0f;
-
-    public Vector3 _initPosition;
-    public Quaternion _initRotation;
-    //private int _notMoveCount = 0;
+    [Space(2)]
+    [Header("ENVIRONMENT PARAMETER")]
+    public int limitCarNum = 300;
+    [Space(2)]
+    [Header("SWITCH")]
+    public bool resetOnCollision = true;
+    public bool changeColor = true;
+    public bool changeSpeed = true;
+    [Space(2)]
+    [Header("PASSING")]
+    public bool countPassing = true;
+    public List<int> detectedFrontCarIdList = new List<int>(5);
+    [Space(2)]
+    [Header("GAME OBJECT")]
+    public GameObject frame;
+    public CarInformation carInformation;
+    [Space(2)]
+    [Header("TEST PARAMETER")]
+    public int testStopCount = 5;
+    [Space(2)]
+    [Header("iranai")]
+    public bool[] diffXYZ = new bool[] {true, false, true};
     private Evaluator evaluator = Evaluator.getInstance();
 
-    public int trackReward = 1;
+    [HideInInspector]
+    public int new_id = 0;
+    [HideInInspector]
+    public Transform _track, _prev_track;
+    [HideInInspector]
+    public RewardCalculation rewardCalculation;
+    [HideInInspector]
+    public Vector3 _initPosition;
+    [HideInInspector]
+    public Quaternion _initRotation;
+    
 
-    public GameObject frame;
-    public bool changeColor = true;
-
-    public bool needDistanceReward = true;
-    public float[] penaltyRewards = new float[8];
-    public float distanceThreshold = 0.2f;
-
-    public CarInformation carInformation; // すべての車の情報をもつオブジェクト
-    //private int rewardTime = 0; // 全体報酬用タイマー
-    public float rewardRate = 1;
-    public bool canGetCommonReward = true;
-    //private int testCount = 0;
-    public int testStopCount = 5;
-
-    private float[] p = new float[] {-1.9f, 0f, 1.9f};
-
-    public int limitCarNum = 30;
-    public bool[] diffXYZ = new bool[] {true, false, true};
-    public bool changeSpeed = true;
-
-    public List<int> detectedFrontCarIdList = new List<int>(5);
-    public bool countPassing = true;
 
     public override void Initialize()
     {
