@@ -51,6 +51,9 @@ public class CarAgent : Agent
     public GameObject frame;
     public CarInformation carInformation;
     [Space(2)]
+    [Header("CAR INFORMATION")]
+    public int commonRewardInterval = 500;
+    [Space(2)]
     [Header("TEST PARAMETER")]
     public int testStopCount = 5;
     [Space(2)]
@@ -85,9 +88,9 @@ public class CarAgent : Agent
     void Update()
     {
 
-        if(!generateNew || id > 1) return;
+        if (!generateNew || id > 1) return;
         //Debug.Log(time);
-        if(time > generateInterval && carInformation.carNum < limitCarNum)
+        if (time > generateInterval && carInformation.carNum < limitCarNum)
         {
             //Debug.Log("add new car");
             // carInformation.choicePositionX();
@@ -117,7 +120,7 @@ public class CarAgent : Agent
             Debug.Break();
         }
 
-        if (carInformation.rewardTime == carInformation.rewardInterval)
+        if (carInformation.rewardTime == commonRewardInterval)
         {
             carInformation.reward = carInformation.throughCarNum/carInformation.carNum;
             carInformation.totalCarNumLog += carInformation.totalCarNum;
@@ -138,12 +141,12 @@ public class CarAgent : Agent
 
     private void MoveCar(float horizontal, float vertical, float dt)
     {
-        if(generateNew){
+        if (generateNew){
             time++;
         }
 
 
-        if (carInformation.rewardTime < carInformation.rewardInterval)
+        if (carInformation.rewardTime < commonRewardInterval)
         {
             if (!canGetCommonReward)
             {
@@ -184,11 +187,11 @@ public class CarAgent : Agent
 
         AddReward(individualReward + angleReward);
 
-        if(foundCarBackward && !foundCarSide)
+        if (foundCarBackward && !foundCarSide)
         {
             evaluator.addBehavior(Time.realtimeSinceStartup, (int)speed, false, vectorAction);
         }
-        if(foundCarForward && !foundCarSide)
+        if (foundCarForward && !foundCarSide)
         {
             evaluator.addBehavior(Time.realtimeSinceStartup, (int)speed, true, vectorAction);
         }
@@ -518,11 +521,11 @@ public class CarAgent : Agent
 
         // See if there is a hit in the given direction
         var rayhit = Physics.Raycast(position, dir, out hit, RAY_DIST);
-        if(rayhit)
+        if (rayhit)
         {
             tag = hit.collider.tag;
             otherAgentPosition = hit.collider.transform.localPosition;
-            if(hit.collider.tag == "car"){
+            if (hit.collider.tag == "car"){
                 CarAgent agent = hit.collider.gameObject.GetComponent(typeof(CarAgent)) as CarAgent;
                 detectedId = agent.id;
                 // if (foundCarBackward == true)
