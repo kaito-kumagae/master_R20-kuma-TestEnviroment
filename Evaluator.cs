@@ -15,19 +15,19 @@ class Evaluator{
         NumCrash = 0;
         Time = 0;
         //Must be changed for each environment.
-        logThroughput = new StreamWriter("C:\\Users\\kenji\\logs\\logThroughput.csv");
+        logThroughput = new StreamWriter("logThroughput.csv");
         logThroughput.WriteLine("time,num");
         logThroughput.Close();
-        logCrash = new StreamWriter("C:\\Users\\kenji\\logs\\logCrash.csv");
+        logCrash = new StreamWriter("logCrash.csv");
         logCrash.WriteLine("time,num,my_speed");
         logCrash.Close();
-        logDistance = new StreamWriter("C:\\Users\\kenji\\logs\\logDistance.csv");
+        logDistance = new StreamWriter("logDistance.csv");
         logDistance.WriteLine("time,x,y,id,speed");
         logDistance.Close();
-        logBehavior = new StreamWriter("C:\\Users\\kenji\\logs\\logBehavior.csv");
+        logBehavior = new StreamWriter("logBehavior.csv");
         logBehavior.WriteLine("time,my_speed,forward,horizontal,verticle");
         logBehavior.Close();
-        logFullData = new StreamWriter("C:\\Users\\kenji\\logs\\logFullData.csv");
+        logFullData = new StreamWriter("logFullData.csv");
         logFullData.Write("flame,x,y,z,");
         for(int i = 0; i < 43; i++){
             logFullData.Write("x" + i.ToString() + ",");

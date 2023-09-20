@@ -11,6 +11,7 @@ public class CarAgent : Agent
     private Initialization initialization;
     private Movement movement;
     private Crash crash;
+    private AddObservations addObservations;
 
     [Header("CAR PARAMETER")]
     public float speed = 10f;
@@ -28,7 +29,7 @@ public class CarAgent : Agent
     public int trackReward = 1;
     public float commonRewardRate = 1;
     public float distanceThreshold = 0.2f;
-    public float[] penaltyRewards = new float[8];
+    public float[] distanceReward = new float[8];
     [Space(2)]
     [Header("GENERATE CAR")]
     public bool generateNew = true;
@@ -56,10 +57,9 @@ public class CarAgent : Agent
     [Space(2)]
     [Header("TEST PARAMETER")]
     public int testStopCount = 5;
-    [Space(2)]
-    [Header("iranai")]
-    public bool[] diffXYZ = new bool[] {true, false, true};
+    
     private Evaluator evaluator = Evaluator.getInstance();
+    private List<float> prev_observations;
 
     [HideInInspector]
     public int new_id = 0;
@@ -71,7 +71,8 @@ public class CarAgent : Agent
     public Vector3 _initPosition;
     [HideInInspector]
     public Quaternion _initRotation;
-    
+    [HideInInspector]
+    public bool foundCarForward, foundCarBackward, foundCarSide;
 
 
     public override void Initialize()
@@ -82,6 +83,7 @@ public class CarAgent : Agent
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
         crash.Initialize(this);
         rewardCalculation = new RewardCalculation(this);
+        addObservations = new AddObservations(this);
         initialization.Initialize();
     }
 
@@ -156,8 +158,7 @@ public class CarAgent : Agent
 
         movement.MoveCar(horizontal, vertical, dt);
     }
-    private List<float> prev_observations;
-
+    
     public override void OnActionReceived(float[] vectorAction)
     {
         if (id == 0)
@@ -206,285 +207,10 @@ public class CarAgent : Agent
         action[1] = Input.GetAxis("Vertical");
         return action;
     }
-
-    private bool foundCarForward, foundCarBackward, foundCarSide;
+    //----------------------------
     public override void CollectObservations(VectorSensor vectorSensor)
     {
-        List<float> observations = new List<float>();
-        float angle = Vector3.SignedAngle(_track.forward, transform.forward, Vector3.up);
-        foundCarBackward = false;
-        foundCarForward = false;
-        foundCarSide = false;
-
-        observations.Add(angle / 180f);
-        
-        string tag;
-        
-        Vector3 diff;
-
-        int detectedId;
-
-        Vector3 otherAgentPosition;
-
-        float distance;
-        float distanceReward;
-
-        //vectorSensor.AddObservation(ObserveRay(1.5f, .5f, 25f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(1.5f, .5f, 25f, out diff, out tag, out detectedId, out otherAgentPosition); //right forward
-        if (needDistanceReward == true)
-        {
-            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[0], 0.2f);
-            AddReward(distanceReward);
-        }
-        observations.Add(distance);
-        ChoiceDiff(diff, ref observations);
-        if (tag == "car")
-        {
-            observations.Add(1);
-            foundCarForward = true;
-            if (countPassing == true)
-            {
-                addElement(detectedId, otherAgentPosition);
-            }
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        if (tag == "wall")
-        {
-            observations.Add(1);
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        //vectorSensor.AddObservation(ObserveRay(1.5f, 0f, 0f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(1.5f, 0f, 0f, out diff, out tag, out detectedId, out otherAgentPosition); //forward
-        if (needDistanceReward == true)
-        {
-            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[1], 0.2f);
-            AddReward(distanceReward);
-        }
-        observations.Add(distance);
-        //vectorSensor.AddObservation((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
-        //vectorSensor.AddObservation(speed);
-        //vectorSensor.AddObservation(torque);
-        ChoiceDiff(diff, ref observations);
-        if (tag == "car")
-        {
-            observations.Add(1);
-            foundCarForward = true;
-            if (countPassing == true)
-            {
-                addElement(detectedId, otherAgentPosition);
-            }
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        if (tag == "wall")
-        {
-            observations.Add(1);
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        //observations.Add(ObserveRay(1.5f, -.5f, -25f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(1.5f, -.5f, -25f, out diff, out tag, out detectedId, out otherAgentPosition); //left forward
-        if (needDistanceReward == true)
-        {
-            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[2], 0.2f);
-            AddReward(distanceReward);
-        }
-        observations.Add(distance);
-        //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
-        //observations.Add(speed);
-        //observations.Add(torque);
-        ChoiceDiff(diff, ref observations);
-        if (tag == "car")
-        {
-            observations.Add(1);
-            foundCarForward = true;
-            if (countPassing == true)
-            {
-                addElement(detectedId, otherAgentPosition);
-            }
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        if (tag == "wall")
-        {
-            observations.Add(1);
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        //observations.Add(ObserveRay(-1.5f, .5f, 155f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(-1.5f, .5f, 155f, out diff, out tag, out detectedId, out otherAgentPosition); //right backward
-        if (needDistanceReward == true)
-        {
-            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[3], 0.2f);
-            AddReward(distanceReward);
-        }
-        observations.Add(distance);
-        //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
-        //observations.Add(speed);
-        //observations.Add(torque);
-        ChoiceDiff(diff, ref observations);
-        if (tag == "car")
-        {
-            observations.Add(1);
-            foundCarBackward = true;
-            if (countPassing == true)
-            {
-                removeElement(detectedId);
-            }
-
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        if (tag == "wall")
-        {
-            observations.Add(1);
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        //observations.Add(ObserveRay(-1.5f, 0, 180f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(-1.5f, 0f, 180f, out diff, out tag, out detectedId, out otherAgentPosition); //backward
-        if (needDistanceReward == true)
-        {
-            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[4], 0.2f);
-            AddReward(distanceReward);
-        }
-        observations.Add(distance);
-        //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
-        //observations.Add(speed);
-        //observations.Add(torque);
-        ChoiceDiff(diff, ref observations);
-        if (tag == "car")
-        {
-            observations.Add(1);
-            foundCarBackward = true;
-            if (countPassing == true)
-            {
-                removeElement(detectedId);
-            }
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        if (tag == "wall")
-        {
-            observations.Add(1);
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        //observations.Add(ObserveRay(-1.5f, -.5f, -155f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(-1.5f, -.5f, -155f, out diff, out tag, out detectedId, out otherAgentPosition); //left backward
-        if (needDistanceReward == true)
-        {
-            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[5], 0.2f);
-            AddReward(distanceReward);
-        }
-        observations.Add(distance);
-        //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
-        //observations.Add(speed);
-        //observations.Add(torque);
-        ChoiceDiff(diff, ref observations);
-        if (tag == "car")
-        {
-            observations.Add(1);
-            foundCarBackward = true;
-            if (countPassing == true)
-            {
-                removeElement(detectedId);
-            }
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        if (tag == "wall")
-        {
-            observations.Add(1);
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        //observations.Add(ObserveRay(0f, .5f, 90f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(0f, .5f, 90f, out diff, out tag, out detectedId, out otherAgentPosition); //right
-        if (needDistanceReward == true)
-        {
-            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[6], 0.2f);
-            AddReward(distanceReward);
-        }
-        observations.Add(distance);
-        //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
-        //observations.Add(speed);
-        //observations.Add(torque);
-        ChoiceDiff(diff, ref observations);
-        if (tag == "car")
-        {
-            observations.Add(1);
-            foundCarSide = true;
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        if (tag == "wall")
-        {
-            observations.Add(1);
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        //observations.Add(ObserveRay(0f, -.5f, -90f, out speed, out torque, out rotation, out tag));
-        distance = ObserveRay(0f, -.5f, -90f, out diff, out tag, out detectedId, out otherAgentPosition); //left
-        if (needDistanceReward == true)
-        {
-            distanceReward = rewardCalculation.CalculateDistanceReward(distance, penaltyRewards[7], 0.2f);
-            AddReward(distanceReward);
-        }
-        observations.Add(distance);
-        //observations.Add((180.0f + Quaternion.Angle(rotation, this.transform.rotation)) / 360.0f);
-        //observations.Add(speed);
-        //observations.Add(torque);
-        ChoiceDiff(diff, ref observations);
-        if (tag == "car")
-        {
-            observations.Add(1);
-            foundCarSide = true;
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        if (tag == "wall")
-        {
-            observations.Add(1);
-        }
-        else
-        {
-            observations.Add(0);
-        }
-        observations.Add(this.speed);
-        observations.Add(this.torque);
+        List<float> observations = addObservations.MakeObservationsList();
         foreach (var v in observations)
         {
             vectorSensor.AddObservation(v);
@@ -493,118 +219,10 @@ public class CarAgent : Agent
     }
 
     //private float ObserveRay(float z, float x, float angle, out float speed, out float torque, out Quaternion rotation, out string tag)
-    private float ObserveRay(float z, float x, float angle, out Vector3 diff, out string tag, out int detectedId, out Vector3 otherAgentPosition)
-    {
-        //speed = 0.0f;
-        //torque = 0.0f;
-        //rotation = Quaternion.identity;
-        diff = Vector3.zero;
-        tag = "none";
-        detectedId = -1;
-        otherAgentPosition = Vector3.zero;
-        var tf = transform;
-
-        // Get the start position of the ray
-        var raySource = tf.position + Vector3.up / 2f;
-        const float RAY_DIST = 5f;
-        var position = raySource + tf.forward * z + tf.right * x;
-
-        // Get the angle of the ray
-        var eulerAngle = Quaternion.Euler(0, angle, 0f);
-        var dir = eulerAngle * tf.forward;
-        RaycastHit hit;
-
-        // laser visualization
-        Ray ray = new Ray(position, dir);
-        Debug.DrawRay(ray.origin, ray.direction*RAY_DIST, Color.red);
-
-
-        // See if there is a hit in the given direction
-        var rayhit = Physics.Raycast(position, dir, out hit, RAY_DIST);
-        if (rayhit)
-        {
-            tag = hit.collider.tag;
-            otherAgentPosition = hit.collider.transform.localPosition;
-            if (hit.collider.tag == "car"){
-                CarAgent agent = hit.collider.gameObject.GetComponent(typeof(CarAgent)) as CarAgent;
-                detectedId = agent.id;
-                // if (foundCarBackward == true)
-                // {
-                //     detectedBackwardId = agent.id;
-                //     if (this.detectedFrontCarIdList.Contains(detectedBackwardId))
-                //     {
-                //         Debug.Log("remove car id");
-                //         removeElement(detectedBackwardId);
-                //     }
-                // }
-                var self_dir = Quaternion.Euler(0, this.torque * this.prevHorizontal * 90f, 0) * (this.transform.forward * this.prevVertical * this.speed);
-                var agent_dir = Quaternion.Euler(0, agent.torque * agent.prevHorizontal * 90f, 0) * (agent.transform.forward * agent.prevVertical * agent.speed);
-                diff = agent_dir - self_dir;
-		        //Debug.Log("diff"+string.Join(",", diff));
-                //Debug.Log("diff.x : "+diff.x);
-		        //Debug.Log("diff.z : "+diff.z);
-                //Debug.Log("diff.z : "+diff.z);
-                //speed = agent.prevVertical * agent.speed / this.speed;
-                //torque = agent.prevHorizontal * agent.torque / this.torque;
-                //rotation = agent.transform.rotation;
-            }
-        }
-        return hit.distance >= 0 ? (hit.distance / RAY_DIST) * Random.Range(1-noise, 1+noise) : -1f;
-    }
-
-    private void addElement(int detectedId, Vector3 otherAgentPosition)
-    {
-        if (!this.detectedFrontCarIdList.Contains(detectedId))
-        {
-            if (Mathf.Abs(transform.localPosition.x - otherAgentPosition.x) < 1.5f) //attention
-            {
-                //Debug.Log("detect new car forward");
-                if (this.detectedFrontCarIdList.Count >= 5)
-                {
-                    this.detectedFrontCarIdList.RemoveAt(0);
-                }
-                this.detectedFrontCarIdList.Add(detectedId);
-            }
-        }
-    }
-
-    private void removeElement(int detectedId)
-    {
-        if (this.detectedFrontCarIdList.Contains(detectedId))
-        {
-            //Debug.Log("remove car id");
-            this.detectedFrontCarIdList.Remove(detectedId);
-            carInformation.passingCounter++;
-        }
-    }
-
-    // private void shiftIndexes()
-    // {
-    //     for (int i = 0; i < this.detectedFrontCarIdList.Count - 1; i++)
-    //     {
-    //         this.detectedFrontCarIdList[i] = this.detectedFrontCarIdList[i + 1];
-    //     }
-    //     this.detectedFrontCarIdList.RemoveAt(this.detectedFrontCarIdList.Count - 1);
-    // }
-
-    private void ChoiceDiff(Vector3 diff, ref List<float> observations)
-    {
-        if (diffXYZ[0])
-        {
-            observations.Add(diff.x);
-        }
-
-        if (diffXYZ[1])
-        {
-            observations.Add(diff.y);
-        }
-
-        if (diffXYZ[2])
-        {
-            observations.Add(diff.z);
-        }
-    }
-
+   
+    
+    
+//-----------------------------
     public override void OnEpisodeBegin()
     {
         if (resetOnCollision)
