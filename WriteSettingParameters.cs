@@ -54,7 +54,7 @@ public class WriteSettingParameters : MonoBehaviour
         streamWriter.WriteLine("");
         streamWriter.WriteLine("CAR INFORMAION");
         streamWriter.WriteLine("commonRewardInterval : " + carAgent.commonRewardInterval.ToString());
-        streamWriter.WriteLine("carNum : " + carInformation.currentCarNum.ToString());
+        streamWriter.WriteLine("currentCarNnm : " + carInformation.currentCarNum.ToString());
         streamWriter.Close();
     }
 }
