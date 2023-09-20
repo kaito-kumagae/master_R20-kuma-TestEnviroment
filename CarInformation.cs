@@ -8,7 +8,7 @@ public class CarInformation : MonoBehaviour
     public int throughCarNum = 0;
     public int rewardTime = 0;
     public float commonReward = 0.0f;
-    public int ReceivedCommonRewardCarNum = 0;
+    public int receivedCommonRewardCarNum = 0;
     public int passingCounter = 0;
     private Logger logger;
 
@@ -28,15 +28,15 @@ public class CarInformation : MonoBehaviour
 
         if (rewardTime == commonRewardInterval)
         {
-            commonReward = (float)throughCarNum/(float)carNum;
+            commonReward = (float)throughCarNum/(float)currentCarNum;
             throughCarNum = 0;
             passingCounter = 0;
         }
 
-        if (ReceivedCommonRewardCarNum >= currentCarNum)
+        if (receivedCommonRewardCarNum >= currentCarNum)
         {
             rewardTime = 0;
-            ReceivedCommonRewardCarNum = 0;
+            receivedCommonRewardCarNum = 0;
         }
     }
 }
