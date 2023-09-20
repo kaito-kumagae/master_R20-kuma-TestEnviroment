@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class CarInformation : MonoBehaviour
 {
-    public int carNum = 0;
-    public float throughCarNum = 0;
+    public int currentCarNum = 0;
+    public int throughCarNum = 0;
     public int rewardTime = 0;
     public float commonReward = 0.0f;
-    public int getRewardCarNum = 0;
-    public int getRewardCarNumLog = 0;
+    public int ReceivedCommonRewardCarNum = 0;
     public int passingCounter = 0;
     private Logger logger;
 
@@ -34,11 +33,10 @@ public class CarInformation : MonoBehaviour
             passingCounter = 0;
         }
 
-        if (getRewardCarNum >= carNum)
+        if (ReceivedCommonRewardCarNum >= currentCarNum)
         {
             rewardTime = 0;
-            getRewardCarNumLog = getRewardCarNum;
-            getRewardCarNum = 0;
+            ReceivedCommonRewardCarNum = 0;
         }
     }
 }

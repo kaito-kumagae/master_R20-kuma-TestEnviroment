@@ -73,8 +73,6 @@ public class CarAgent : Agent
     [HideInInspector]
     public Quaternion _initRotation;
     
-
-
     public override void Initialize()
     {
         initialization = new Initialization(this);
@@ -89,10 +87,8 @@ public class CarAgent : Agent
     {
         timer = Time.realtimeSinceStartup;
         if (!generateNew || id > 1) return;
-        //Debug.Log(time);
-        if (time > generateInterval && carInformation.carNum < limitCarNum)
+        if (time > generateInterval && carInformation.currentCarNum < limitCarNum)
         {
-            //Debug.Log("add new car");
             var gameObject = Instantiate(this, _initPosition, _initRotation);
             new_id += 2;
             gameObject.id = new_id;
@@ -102,8 +98,7 @@ public class CarAgent : Agent
             gameObject.speed = Random.Range(minSpeed, maxSpeed+1);
             gameObject.canGetCommonReward = true;
             gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
-            //Debug.Log("Generaiterate GenerateInterval");
-            carInformation.carNum++;
+            carInformation.currentCarNum++;
             time = 0;
         }
     }
@@ -578,18 +573,13 @@ public class CarAgent : Agent
     {
         if (resetOnCollision)
         {
-            //transform.localPosition = Vector3.zero;
-            //transform.localPosition = new Vector3(0, 0, 5 - id * 7);
             transform.localPosition = _initPosition;
             transform.localRotation = _initRotation;
             this.speed = Random.Range(minSpeed, maxSpeed+1);
-            //transform.localRotation = Quaternion.identity;
-            //time = 0;
             if (changeColor)
             {
                 frame.GetComponent<ColorController>().ChangeColor(this.speed, maxSpeed, minSpeed);
             }
-            //Debug.Log("Generaite Episode Begin" );
         }
     }
 
