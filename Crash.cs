@@ -8,7 +8,7 @@ public class Crash : MonoBehaviour
     private Evaluator evaluator = Evaluator.getInstance();
     private CarInformation carInformation;
 
-    public Crash(CarAgent carAgent)
+    public void Initialize(CarAgent carAgent)
     {
         this.carAgent = carAgent;
         carInformation = this.carAgent.carInformation;

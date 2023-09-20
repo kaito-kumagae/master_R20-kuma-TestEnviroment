@@ -77,6 +77,7 @@ public class CarAgent : Agent
         logger = new Logger(carInformation);
         movement = new Movement(this);
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
+        crash.Initialize(this);
         rewardCalculation = new RewardCalculation(this);
         initialization.Initialize();
     }
