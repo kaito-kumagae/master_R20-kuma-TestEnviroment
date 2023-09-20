@@ -7,12 +7,14 @@ public class Crash : MonoBehaviour
     private CarAgent carAgent;
     private Evaluator evaluator = Evaluator.getInstance();
     private CarInformation carInformation;
+    private RewardCalculation rewardCalculation;
 
     // Initialize member variables
     public void Initialize(CarAgent carAgent)
     {
         this.carAgent = carAgent;
         this.carInformation = carAgent.carInformation;
+        this.rewardCalculation = carAgent.rewardCalculation;
     }
 
     public void CrashProcess(Collision other)
@@ -23,7 +25,7 @@ public class Crash : MonoBehaviour
             var carCenter = carAgent.transform.position + Vector3.up;
 
             // TODO: Ported to reward package
-            carAgent.SetReward(-10f);
+            rewardCalculation.setCrashReward(carAgent.crashReward);
             carAgent.EndEpisode();
             if (carAgent.countPassing == true)
             {
