@@ -8,28 +8,33 @@ public class Crash : MonoBehaviour
     private Evaluator evaluator = Evaluator.getInstance();
     private CarInformation carInformation;
 
+    // Initialize member variables
     public void Initialize(CarAgent carAgent)
     {
         this.carAgent = carAgent;
-        carInformation = this.carAgent.carInformation;
+        this.carInformation = carAgent.carInformation;
     }
 
     public void CrashProcess(Collision other)
     {
+        // If car have an accident
         if (other.gameObject.CompareTag("wall") || other.gameObject.CompareTag("car"))
         {
-            // increased from -1f -> -10f
             var carCenter = carAgent.transform.position + Vector3.up;
+
+            // TODO: Ported to reward package
             carAgent.SetReward(-10f);
             carAgent.EndEpisode();
             if (carAgent.countPassing == true)
             {
                 carAgent.detectedFrontCarIdList.Clear();
             }
+
+            // If the collision was a car
             if(other.gameObject.CompareTag("car"))
             {
                 var otherAgent = (CarAgent)other.gameObject.GetComponent(typeof(CarAgent));
-                if((carAgent.id < otherAgent.id) && (isNot01(otherAgent.id)))
+                if((carAgent.id < otherAgent.id) && (IsNot01(otherAgent.id)))
                 {
                     if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f))
                     {
@@ -43,7 +48,6 @@ public class Crash : MonoBehaviour
                                 carAgent.carInformation.totalCarNum++;
                             }
                         }
-
                         else
                         {
                             evaluator.addCrashCars(Time.realtimeSinceStartup,carAgent.speed);
@@ -51,6 +55,7 @@ public class Crash : MonoBehaviour
                             {
                                 evaluator.addCrashCars(Time.realtimeSinceStartup,otherAgent.speed);
                                 Destroy(other.gameObject);
+                                // TODO :Change carIformation variable name
                                 carInformation.carNum--;
                                 carInformation.totalCarNum++;
                             }
@@ -60,11 +65,13 @@ public class Crash : MonoBehaviour
             }
             else
             {
-                    evaluator.addCrashCars(Time.realtimeSinceStartup, carAgent.speed);
+                evaluator.addCrashCars(Time.realtimeSinceStartup, carAgent.speed);
             }
         }
     }
-    private bool isNot01(int otherAgentId)
+
+    // Prevent both cars from disappearing when cars with id0 and id1 collide
+    private bool IsNot01(int otherAgentId)
     {
         if ((carAgent.id == 0) || (carAgent.id == 1))
         {
