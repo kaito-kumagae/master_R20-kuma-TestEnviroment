@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class AddObservations
 {
-
     private CarAgent carAgent;
     private CarInformation carInformation;
     public RewardCalculation rewardCalculation;
@@ -48,16 +47,16 @@ public class AddObservations
         for (int i = 0; i < rayDirections.Length; i++)
         {
             distance = ObserveRay(rayDirections[i].Item1, rayDirections[i].Item2, rayDirections[i].Item3, out diff, out tag, out detectedCarId, out otherAgentPosition);
-            if (carAgent.needDistanceReward == true)
+            if (carAgent.needDistanceReward)
             {
-                distanceReward = rewardCalculation.CalculateDistanceReward(distance, carAgent.distanceReward[0], 0.2f);
+                distanceReward = rewardCalculation.CalculateDistanceReward(distance, carAgent.distanceReward[i], 0.2f);
                 carAgent.AddReward(distanceReward);
             }
             observations.Add(distance);
             observations.Add(diff.x);
             observations.Add(diff.z);
-            float FrontRear = rayDirections[i].Item1;
-            ObjectObservation(tag, detectedCarId, otherAgentPosition, ref observations, FrontRear);
+            float carVerticalPosition = rayDirections[i].Item1;
+            ObjectObservation(tag, detectedCarId, otherAgentPosition, ref observations, carVerticalPosition);
         }
             observations.Add(carAgent.speed);
             observations.Add(carAgent.torque);
@@ -65,35 +64,35 @@ public class AddObservations
             return observations;
         }
 
-    public void ObjectObservation(string tag, int detectedCarId, Vector3 otherAgentPosition, ref List<float> observations, float FrontRear)
+    public void ObjectObservation(string tag, int detectedCarId, Vector3 otherAgentPosition, ref List<float> observations, float carVerticalPosition)
     {   
         if(tag == "car")
         {
-            CheckCarInfo(FrontRear);
+            CheckFoundCarPosition(carVerticalPosition);
             if(carAgent.countPassing)
             {
                 if(carAgent.foundCarForward)
                 {
-                    addCarId(detectedCarId, otherAgentPosition);
+                    addOvertakingCarId(detectedCarId, otherAgentPosition);
                 }
                 else if(carAgent.foundCarBackward)
                 {
-                    removeCarId(detectedCarId);
+                    removeOvertakenCarId(detectedCarId);
                 }
             }
         }
 
-    observations.Add(tag == "car" ? 1 : 0);
-    observations.Add(tag == "wall" ? 1 : 0);
+        observations.Add(tag == "car" ? 1 : 0);
+        observations.Add(tag == "wall" ? 1 : 0);
     }
 
-    public void CheckCarInfo(float FrontRear)
+    public void CheckFoundCarPosition(float carVerticalPosition) 
     {
-        if(FrontRear > 0)
+        if(carVerticalPosition > 0)
         {
             carAgent.foundCarForward = true;
         }
-        else if(FrontRear < 0)
+        else if(carVerticalPosition < 0)
         {
             carAgent.foundCarBackward = true;
         }
@@ -105,7 +104,6 @@ public class AddObservations
 
     private float ObserveRay(float z, float x, float angle, out Vector3 diff, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
     {
-
         diff = Vector3.zero;
         tag = "none";
         detectedCarId = -1;
@@ -127,8 +125,8 @@ public class AddObservations
         Debug.DrawRay(ray.origin, ray.direction*RAY_DIST, Color.red);
 
         // See if there is a hit in the given direction
-        var rayhit = Physics.Raycast(position, dir, out hit, RAY_DIST);
-        if (rayhit)
+        var rayHit = Physics.Raycast(position, dir, out hit, RAY_DIST);
+        if (rayHit)
         {
             tag = hit.collider.tag;
             otherAgentPosition = hit.collider.transform.localPosition;
@@ -143,13 +141,12 @@ public class AddObservations
         return hit.distance >= 0 ? (hit.distance / RAY_DIST) * Random.Range(1-carAgent.noise, 1+carAgent.noise) : -1f;
     }
 
-    private void addCarId(int detectedCarId, Vector3 otherAgentPosition)
+    private void addOvertakingCarId(int detectedCarId, Vector3 otherAgentPosition)
     {
         if (!carAgent.detectedFrontCarIdList.Contains(detectedCarId))
         {
-            if (Mathf.Abs(carAgent.transform.localPosition.x - otherAgentPosition.x) < 1.5f) //attention
+            if (Mathf.Abs(carAgent.transform.localPosition.x - otherAgentPosition.x) < 1.5f)
             {
-                //Debug.Log("detect new car forward");
                 if (carAgent.detectedFrontCarIdList.Count >= 5)
                 {
                     carAgent.detectedFrontCarIdList.RemoveAt(0);
@@ -159,11 +156,10 @@ public class AddObservations
         }
     }
 
- private void removeCarId(int detectedCarId)
+ private void removeOvertakenCarId(int detectedCarId)
     {
         if (carAgent.detectedFrontCarIdList.Contains(detectedCarId))
         {
-            //Debug.Log("remove car id");
             carAgent.detectedFrontCarIdList.Remove(detectedCarId);
             carInformation.passingCounter++;
         }

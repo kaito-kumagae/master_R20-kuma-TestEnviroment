@@ -30,6 +30,7 @@ public class CarAgent : Agent
     public float commonRewardRate = 1;
     public float distanceThreshold = 0.2f;
     public float[] distanceReward = new float[8];
+    public float crashReward = -10f;
     [Space(2)]
     [Header("GENERATE CAR")]
     public bool generateNew = true;
@@ -56,7 +57,8 @@ public class CarAgent : Agent
     public int commonRewardInterval = 500;
     [Space(2)]
     [Header("TEST PARAMETER")]
-    public int testStopCount = 5;
+    public int stopTime = 5;
+    public float timer = 0;
     
     private Evaluator evaluator = Evaluator.getInstance();
     private List<float> prev_observations;
@@ -80,16 +82,16 @@ public class CarAgent : Agent
         initialization = new Initialization(this);
         logger = new Logger(carInformation);
         movement = new Movement(this);
+        rewardCalculation = new RewardCalculation(this);
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
         crash.Initialize(this);
-        rewardCalculation = new RewardCalculation(this);
         addObservations = new AddObservations(this);
         initialization.Initialize();
     }
 
     void Update()
     {
-
+        timer = Time.realtimeSinceStartup;
         if (!generateNew || id > 1) return;
         //Debug.Log(time);
         if (time > generateInterval && carInformation.carNum < limitCarNum)
@@ -116,7 +118,7 @@ public class CarAgent : Agent
     {
         carInformation.rewardTime++;
 
-        if (Time.realtimeSinceStartup >= testStopCount)
+        if ((Time.realtimeSinceStartup >= stopTime) && (stopTime != 0))
         {
             logger.PrintLog();
             Debug.Break();
@@ -207,7 +209,7 @@ public class CarAgent : Agent
         action[1] = Input.GetAxis("Vertical");
         return action;
     }
-    //----------------------------
+ 
     public override void CollectObservations(VectorSensor vectorSensor)
     {
         List<float> observations = addObservations.MakeObservationsList();
@@ -218,11 +220,6 @@ public class CarAgent : Agent
         prev_observations = observations;
     }
 
-    //private float ObserveRay(float z, float x, float angle, out float speed, out float torque, out Quaternion rotation, out string tag)
-   
-    
-    
-//-----------------------------
     public override void OnEpisodeBegin()
     {
         if (resetOnCollision)

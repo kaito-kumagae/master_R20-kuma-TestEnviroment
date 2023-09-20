@@ -23,7 +23,7 @@ public class Crash : MonoBehaviour
             var carCenter = carAgent.transform.position + Vector3.up;
 
             // TODO: Ported to reward package
-            carAgent.SetReward(-10f);
+            carAgent.rewardCalculation.setCrashReward(carAgent.crashReward);
             carAgent.EndEpisode();
             if (carAgent.countPassing == true)
             {
