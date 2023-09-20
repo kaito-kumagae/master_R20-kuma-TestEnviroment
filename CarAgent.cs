@@ -10,7 +10,6 @@ public class CarAgent : Agent
     private Logger logger;
     private Initialization initialization;
     private Movement movement;
-
     [Header("CAR PARAMETER")]
     public float speed = 10f;
     public float minSpeed = 5;
