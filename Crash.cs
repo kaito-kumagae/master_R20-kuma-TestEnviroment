@@ -41,7 +41,7 @@ public class Crash : MonoBehaviour
                         var newHit = hit.transform;
                         if (newHit.GetComponent<Collider>().tag == "startTile")
                         {
-                            if(carAgent.generateNew)
+                            if (carAgent.generateNew)
                             {
                                 Destroy(other.gameObject);
                                 carAgent.carInformation.carNum--;
