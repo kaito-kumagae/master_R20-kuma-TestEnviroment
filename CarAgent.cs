@@ -10,6 +10,7 @@ public class CarAgent : Agent
     private Logger logger;
     private Initialization initialization;
     private Movement movement;
+    private Crash crash;
 
     [Header("CAR PARAMETER")]
     public float speed = 10f;
@@ -75,6 +76,8 @@ public class CarAgent : Agent
         initialization = new Initialization(this);
         logger = new Logger(carInformation);
         movement = new Movement(this);
+        crash = gameObject.AddComponent(typeof(Crash)) as Crash;
+        crash.Initialize(this);
         rewardCalculation = new RewardCalculation(this);
         initialization.Initialize();
     }
@@ -622,65 +625,6 @@ public class CarAgent : Agent
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("wall") || other.gameObject.CompareTag("car"))
-        {
-            // increased from -1f -> -10f
-            var carCenter = transform.position + Vector3.up;
-            SetReward(-10f);
-            EndEpisode();
-            if (countPassing == true)
-            {
-                this.detectedFrontCarIdList.Clear();
-            }
-            if(other.gameObject.CompareTag("car"))
-            {
-                var otherAgent = (CarAgent)other.gameObject.GetComponent(typeof(CarAgent));
-                if((this.id < otherAgent.id) && (isNot01(otherAgent.id)))
-                {
-                    if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f))
-                    {
-                        var newHit = hit.transform;
-                        if (newHit.GetComponent<Collider>().tag == "startTile")
-                        {
-                            if(generateNew)
-                            {
-                                Destroy(other.gameObject);
-                                carInformation.carNum--;
-                                carInformation.totalCarNum++;
-                            }
-                        }
-
-                        else
-                        {
-                            evaluator.addCrashCars(Time.realtimeSinceStartup,speed);
-                            if(generateNew)
-                            {
-                                otherAgent.evaluator.addCrashCars(Time.realtimeSinceStartup,otherAgent.speed);
-                                Destroy(other.gameObject);
-                                carInformation.carNum--;
-                                carInformation.totalCarNum++;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                    evaluator.addCrashCars(Time.realtimeSinceStartup, speed);
-                    //carInformation.totalCarNum++;
-            }
-        }
-    }
-
-    private bool isNot01(int otherAgentId)
-    {
-        if ((id == 0) || (id == 1))
-        {
-            if ((otherAgentId == 0) || (otherAgentId == 1))
-            {
-                return false;
-            }
-        }
-        return true;
+        crash.CrashProcess(other);
     }
 }
