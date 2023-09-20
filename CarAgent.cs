@@ -55,7 +55,8 @@ public class CarAgent : Agent
     public int commonRewardInterval = 500;
     [Space(2)]
     [Header("TEST PARAMETER")]
-    public int testStopCount = 5;
+    public int stopTime = 5;
+    public float timer = 0;
     [Space(2)]
     [Header("iranai")]
     public bool[] diffXYZ = new bool[] {true, false, true};
@@ -87,7 +88,7 @@ public class CarAgent : Agent
 
     void Update()
     {
-
+        timer = Time.realtimeSinceStartup;
         if (!generateNew || id > 1) return;
         //Debug.Log(time);
         if (time > generateInterval && carInformation.carNum < limitCarNum)
@@ -114,7 +115,7 @@ public class CarAgent : Agent
     {
         carInformation.rewardTime++;
 
-        if (Time.realtimeSinceStartup >= testStopCount)
+        if ((Time.realtimeSinceStartup >= stopTime) && (stopTime != 0))
         {
             logger.PrintLog();
             Debug.Break();
