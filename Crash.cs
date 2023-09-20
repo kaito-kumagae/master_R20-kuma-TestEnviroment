@@ -22,7 +22,6 @@ public class Crash : MonoBehaviour
         {
             var carCenter = carAgent.transform.position + Vector3.up;
 
-            // TODO: Ported to reward package
             carAgent.rewardCalculation.setCrashReward(carAgent.crashReward);
             carAgent.EndEpisode();
             if (carAgent.countPassing == true)
@@ -44,8 +43,7 @@ public class Crash : MonoBehaviour
                             if (carAgent.generateNew)
                             {
                                 Destroy(other.gameObject);
-                                carAgent.carInformation.carNum--;
-                                carAgent.carInformation.totalCarNum++;
+                                carAgent.carInformation.currentCarNum--;
                             }
                         }
                         else
@@ -55,9 +53,7 @@ public class Crash : MonoBehaviour
                             {
                                 evaluator.addCrashCars(Time.realtimeSinceStartup,otherAgent.speed);
                                 Destroy(other.gameObject);
-                                // TODO :Change carIformation variable name
-                                carInformation.carNum--;
-                                carInformation.totalCarNum++;
+                                carInformation.currentCarNum--;
                             }
                         }
                     }
