@@ -112,4 +112,9 @@ public class RewardCalculation
         }
         return 0.0f;
     }
+
+    public void setCrashReward(float crashReward)
+    {
+        carAgent.SetReward(crashReward);
+    }
 }

@@ -29,6 +29,7 @@ public class CarAgent : Agent
     public float commonRewardRate = 1;
     public float distanceThreshold = 0.2f;
     public float[] penaltyRewards = new float[8];
+    public float crashReward = -10f;
     [Space(2)]
     [Header("GENERATE CAR")]
     public bool generateNew = true;
@@ -80,9 +81,9 @@ public class CarAgent : Agent
         initialization = new Initialization(this);
         logger = new Logger(carInformation);
         movement = new Movement(this);
+        rewardCalculation = new RewardCalculation(this);
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
         crash.Initialize(this);
-        rewardCalculation = new RewardCalculation(this);
         initialization.Initialize();
     }
 
