@@ -45,7 +45,6 @@ public class Crash : MonoBehaviour
                             {
                                 Destroy(other.gameObject);
                                 carAgent.carInformation.carNum--;
-                                carAgent.carInformation.totalCarNum++;
                             }
                         }
                         else
@@ -57,7 +56,6 @@ public class Crash : MonoBehaviour
                                 Destroy(other.gameObject);
                                 // TODO :Change carIformation variable name
                                 carInformation.carNum--;
-                                carInformation.totalCarNum++;
                             }
                         }
                     }

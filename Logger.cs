@@ -14,12 +14,8 @@ public class Logger
     public void PrintLog()
     {
         Debug.Log("throughput : " + carInformation.throughCarNum);
-        Debug.Log("crash : " + (evaluator.getNumCrash()-carInformation.crashCarNumLog));
+        Debug.Log("crash : " + (evaluator.getNumCrash()));
         Debug.Log("passing : " + carInformation.passingCounter);
         Debug.Log("-------------------------------");
     }
-
-    // void Start()
-    // {
-    // }
 }

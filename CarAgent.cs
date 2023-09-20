@@ -7,7 +7,6 @@ using System.Linq;
 
 public class CarAgent : Agent
 {
-    private Logger logger;
     private Initialization initialization;
     private Movement movement;
     private Crash crash;
@@ -78,7 +77,6 @@ public class CarAgent : Agent
     public override void Initialize()
     {
         initialization = new Initialization(this);
-        logger = new Logger(carInformation);
         movement = new Movement(this);
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
         crash.Initialize(this);
@@ -94,58 +92,44 @@ public class CarAgent : Agent
         if (time > generateInterval && carInformation.carNum < limitCarNum)
         {
             //Debug.Log("add new car");
-            // carInformation.choicePositionX();
             var gameObject = Instantiate(this, _initPosition, _initRotation);
             new_id += 2;
             gameObject.id = new_id;
             gameObject.transform.parent = this.transform.parent.gameObject.transform;
-            gameObject.transform.localPosition = _initPosition;// new Vector3(p[carInformation.startPositionX], 0f, _initPosition.z);
+            gameObject.transform.localPosition = _initPosition;
             gameObject.transform.localRotation = _initRotation;
             gameObject.speed = Random.Range(minSpeed, maxSpeed+1);
             gameObject.canGetCommonReward = true;
             gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
             //Debug.Log("Generaiterate GenerateInterval");
             carInformation.carNum++;
-            carInformation.totalCarNum++;
             time = 0;
-        }
-    }
-
-    void CarInformationController()
-    {
-        carInformation.rewardTime++;
-
-        if ((Time.realtimeSinceStartup >= stopTime) && (stopTime != 0))
-        {
-            logger.PrintLog();
-            Debug.Break();
-        }
-
-        if (carInformation.rewardTime == commonRewardInterval)
-        {
-            carInformation.reward = carInformation.throughCarNum/carInformation.carNum;
-            carInformation.totalCarNumLog += carInformation.totalCarNum;
-            carInformation.totalCarNum = (int)carInformation.carNum;
-            carInformation.carNum = (int)carInformation.carNum;
-            carInformation.crashCarNumLog = evaluator.getNumCrash();
-            carInformation.throughCarNum = 0;
-            carInformation.passingCounter = 0;
-        }
-
-        if (carInformation.getRewardCarNum >= carInformation.carNum)
-        {
-            carInformation.rewardTime = 0;
-            carInformation.getRewardCarNumLog = carInformation.getRewardCarNum;
-            carInformation.getRewardCarNum = 0;
         }
     }
 
     private void MoveCar(float horizontal, float vertical, float dt)
     {
-        if (generateNew){
+        movement.MoveCar(horizontal, vertical, dt);
+    }
+    private List<float> prev_observations;
+
+    public override void OnActionReceived(float[] vectorAction)
+    {
+        if (generateNew)
+        {
             time++;
         }
 
+        if (id == 0)
+        {
+            carInformation.CarInformationController(stopTime, commonRewardInterval);
+        }
+
+        if (carInformation.rewardTime >= commonRewardInterval && canGetCommonReward)
+        {
+            float commonReward = rewardCalculation.CalculateCommonReward();
+            AddReward(commonReward);
+        }
 
         if (carInformation.rewardTime < commonRewardInterval)
         {
@@ -153,23 +137,6 @@ public class CarAgent : Agent
             {
                 canGetCommonReward = true;
             }
-        }
-
-        movement.MoveCar(horizontal, vertical, dt);
-    }
-    private List<float> prev_observations;
-
-    public override void OnActionReceived(float[] vectorAction)
-    {
-        if (id == 0)
-        {
-            CarInformationController();
-        }
-
-        if (canGetCommonReward)
-        {
-            float commonReward = rewardCalculation.CalculateCommonReward();
-            AddReward(commonReward);
         }
 
         float horizontal = vectorAction[0];
@@ -612,8 +579,6 @@ public class CarAgent : Agent
         {
             //transform.localPosition = Vector3.zero;
             //transform.localPosition = new Vector3(0, 0, 5 - id * 7);
-            //carInformation.choicePositionX();
-            // transform.localPosition =  new Vector3(p[carInformation.startPositionX], 0f, _initPosition.z);
             transform.localPosition = _initPosition;
             transform.localRotation = _initRotation;
             this.speed = Random.Range(minSpeed, maxSpeed+1);
