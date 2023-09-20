@@ -93,7 +93,7 @@ public class RewardCalculation
     public float CalculateCommonReward()
     {
         float commonReward = carInformation.commonReward * carAgent.commonRewardRate;
-        carInformation.getRewardCarNum++;
+        carInformation.receivedCommonRewardCarNum++;
         carAgent.canGetCommonReward = false;
         return commonReward;
     }
