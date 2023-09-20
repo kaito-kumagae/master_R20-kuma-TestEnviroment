@@ -112,7 +112,7 @@ public class CarAgent : Agent
     {
         movement.MoveCar(horizontal, vertical, dt);
     }
-    private List<float> prev_observations;
+    
 
     public override void OnActionReceived(float[] vectorAction)
     {
