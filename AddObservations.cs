@@ -40,8 +40,8 @@ public class AddObservations
             (-1.5f, .5f, 155f),  // right backward
             (-1.5f, 0f, 180f),   // backward
             (-1.5f, -.5f, -155f),// left backward
-            (0f, .5f, 90f),      // rightside
-            (0f, -.5f, -90f)     // leftside
+            (0f, .5f, 90f),      // right side
+            (0f, -.5f, -90f)     // left side
         };
 
         for (int i = 0; i < rayDirections.Length; i++)
@@ -112,7 +112,6 @@ public class AddObservations
 
         // Get the start position of the ray
         var raySource = tf.position + Vector3.up / 2f;
-        const float RAY_DIST = 5f;
         var position = raySource + tf.forward * z + tf.right * x;
 
         // Get the angle of the ray
@@ -122,10 +121,10 @@ public class AddObservations
 
         // laser visualization
         Ray ray = new Ray(position, dir);
-        Debug.DrawRay(ray.origin, ray.direction*RAY_DIST, Color.red);
+        Debug.DrawRay(ray.origin, ray.direction*carAgent.rayDistance, Color.red);
 
         // See if there is a hit in the given direction
-        var rayHit = Physics.Raycast(position, dir, out hit, RAY_DIST);
+        var rayHit = Physics.Raycast(position, dir, out hit, carAgent.rayDistance);
         if (rayHit)
         {
             tag = hit.collider.tag;
@@ -138,7 +137,7 @@ public class AddObservations
                 diff = agent_dir - self_dir;
             }
         }
-        return hit.distance >= 0 ? (hit.distance / RAY_DIST) * Random.Range(1-carAgent.noise, 1+carAgent.noise) : -1f;
+        return hit.distance >= 0 ? (hit.distance / carAgent.rayDistance) * Random.Range(1-carAgent.noise, 1+carAgent.noise) : -1f;
     }
 
     private void addOvertakingCarId(int detectedCarId, Vector3 otherAgentPosition)

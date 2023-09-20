@@ -21,6 +21,7 @@ public class CarAgent : Agent
     public float prevHorizontal = 0f;
     public int id = 0;
     public float noise = 0.1f;
+    public float rayDistance = 5f;
     [Space(2)]
     [Header("REWARD")]
     public bool needDistanceReward = true;
@@ -72,14 +73,10 @@ public class CarAgent : Agent
     public Vector3 _initPosition;
     [HideInInspector]
     public Quaternion _initRotation;
-<<<<<<< HEAD
     [HideInInspector]
     public bool foundCarForward, foundCarBackward, foundCarSide;
 
 
-=======
-    
->>>>>>> master
     public override void Initialize()
     {
         initialization = new Initialization(this);
@@ -143,25 +140,6 @@ public class CarAgent : Agent
             }
         }
 
-<<<<<<< HEAD
-        movement.MoveCar(horizontal, vertical, dt);
-    }
-    
-    public override void OnActionReceived(float[] vectorAction)
-    {
-        if (id == 0)
-        {
-            CarInformationController();
-        }
-
-        if (canGetCommonReward)
-        {
-            float commonReward = rewardCalculation.CalculateCommonReward();
-            AddReward(commonReward);
-        }
-
-=======
->>>>>>> master
         float horizontal = vectorAction[0];
         float vertical = vectorAction[1];
         vertical = Mathf.Clamp(vertical, -1.0f, 1.0f);
