@@ -31,10 +31,10 @@ public class Crash : MonoBehaviour
             }
 
             // If the collision was a car
-            if(other.gameObject.CompareTag("car"))
+            if (other.gameObject.CompareTag("car"))
             {
                 var otherAgent = (CarAgent)other.gameObject.GetComponent(typeof(CarAgent));
-                if((carAgent.id < otherAgent.id) && (IsNot01(otherAgent.id)))
+                if ((carAgent.id < otherAgent.id) && (IsNot01(otherAgent.id)))
                 {
                     if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f))
                     {
@@ -51,7 +51,7 @@ public class Crash : MonoBehaviour
                         else
                         {
                             evaluator.addCrashCars(Time.realtimeSinceStartup,carAgent.speed);
-                            if(carAgent.generateNew)
+                            if (carAgent.generateNew)
                             {
                                 evaluator.addCrashCars(Time.realtimeSinceStartup,otherAgent.speed);
                                 Destroy(other.gameObject);
