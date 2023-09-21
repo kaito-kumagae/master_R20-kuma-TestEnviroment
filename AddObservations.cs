@@ -64,42 +64,34 @@ public class AddObservations
         return observations;
     }
 
-    public void ObjectObservation(string tag, int detectedCarId, Vector3 otherAgentPosition, ref List<float> observations, float carVerticalPosition)
+    private void ObjectObservation(string tag, int detectedCarId, Vector3 otherAgentPosition, ref List<float> observations, float carVerticalPosition)
     {   
         if (tag == "car")
         {
-            CheckFoundCarPosition(carVerticalPosition);
-            if (carAgent.countPassing)
+            if (carVerticalPosition > 0)
             {
-                if (carAgent.foundCarForward)
+                carAgent.foundCarForward = true;
+                if (carAgent.countPassing)
                 {
                     addOvertakingCarId(detectedCarId, otherAgentPosition);
                 }
-                else if (carAgent.foundCarBackward)
+            }
+            else if (carVerticalPosition < 0)
+            {
+                carAgent.foundCarBackward = true;
+                if (carAgent.countPassing)
                 {
                     removeOvertakenCarId(detectedCarId);
                 }
             }
+            else
+            {
+                carAgent.foundCarSide = true;
+            } 
         }
 
         observations.Add(tag == "car" ? 1 : 0);
         observations.Add(tag == "wall" ? 1 : 0);
-    }
-
-    public void CheckFoundCarPosition(float carVerticalPosition) 
-    {
-        if (carVerticalPosition > 0)
-        {
-            carAgent.foundCarForward = true;
-        }
-        else if (carVerticalPosition < 0)
-        {
-            carAgent.foundCarBackward = true;
-        }
-        else
-        {
-            carAgent.foundCarSide = true;
-        }
     }
 
     private float ObserveRay(float z, float x, float angle, out Vector3 relativeSpeed, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
@@ -163,5 +155,5 @@ public class AddObservations
             carAgent.detectedFrontCarIdList.Remove(detectedCarId);
             carInformation.passingCounter++;
         }
-    }   
+    }
 }
