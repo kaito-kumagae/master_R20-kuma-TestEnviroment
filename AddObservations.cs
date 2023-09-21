@@ -62,20 +62,20 @@ public class AddObservations
         observations.Add(carAgent.torque);
 
         return observations;
-        }
+    }
 
     public void ObjectObservation(string tag, int detectedCarId, Vector3 otherAgentPosition, ref List<float> observations, float carVerticalPosition)
     {   
-        if(tag == "car")
+        if (tag == "car")
         {
             CheckFoundCarPosition(carVerticalPosition);
-            if(carAgent.countPassing)
+            if (carAgent.countPassing)
             {
-                if(carAgent.foundCarForward)
+                if (carAgent.foundCarForward)
                 {
                     addOvertakingCarId(detectedCarId, otherAgentPosition);
                 }
-                else if(carAgent.foundCarBackward)
+                else if (carAgent.foundCarBackward)
                 {
                     removeOvertakenCarId(detectedCarId);
                 }
@@ -88,11 +88,11 @@ public class AddObservations
 
     public void CheckFoundCarPosition(float carVerticalPosition) 
     {
-        if(carVerticalPosition > 0)
+        if (carVerticalPosition > 0)
         {
             carAgent.foundCarForward = true;
         }
-        else if(carVerticalPosition < 0)
+        else if (carVerticalPosition < 0)
         {
             carAgent.foundCarBackward = true;
         }
@@ -129,12 +129,13 @@ public class AddObservations
         {
             tag = hit.collider.tag;
             otherAgentPosition = hit.collider.transform.localPosition;
-            if (hit.collider.tag == "car"){
+            if (hit.collider.tag == "car")
+            {
                 CarAgent agent = hit.collider.gameObject.GetComponent(typeof(CarAgent)) as CarAgent;
                 detectedCarId = agent.id;
-                var self_dir = Quaternion.Euler(0, carAgent.torque * carAgent.prevHorizontal * 90f, 0) * (carAgent.transform.forward * carAgent.prevVertical * carAgent.speed);
-                var agent_dir = Quaternion.Euler(0, agent.torque * agent.prevHorizontal * 90f, 0) * (agent.transform.forward * agent.prevVertical * agent.speed);
-                relativeSpeed = agent_dir - self_dir;
+                var selfDir = Quaternion.Euler(0, carAgent.torque * carAgent.prevHorizontal * 90f, 0) * (carAgent.transform.forward * carAgent.prevVertical * carAgent.speed);
+                var agentDir = Quaternion.Euler(0, agent.torque * agent.prevHorizontal * 90f, 0) * (agent.transform.forward * agent.prevVertical * agent.speed);
+                relativeSpeed = agentDir - selfDir;
             }
         }
         return hit.distance >= 0 ? (hit.distance / carAgent.rayDistance) * Random.Range(1-carAgent.noise, 1+carAgent.noise) : -1f;
