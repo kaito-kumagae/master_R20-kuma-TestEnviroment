@@ -6,7 +6,7 @@ public class AddObservations
 {
     private CarAgent carAgent;
     private CarInformation carInformation;
-    public RewardCalculation rewardCalculation;
+    private  RewardCalculation rewardCalculation;
 
     public AddObservations(CarAgent carAgent)
     {
@@ -26,10 +26,10 @@ public class AddObservations
         observations.Add(angle / 180f);
         
         string tag;
-        Vector3 diff;
+        Vector3 relativeSpeed;
         int detectedCarId;
         Vector3 otherAgentPosition;
-        float distance;
+        float distanceObservedObject;
         float distanceReward;
 
         (float, float, float)[] rayDirections = //ray
@@ -46,22 +46,22 @@ public class AddObservations
 
         for (int i = 0; i < rayDirections.Length; i++)
         {
-            distance = ObserveRay(rayDirections[i].Item1, rayDirections[i].Item2, rayDirections[i].Item3, out diff, out tag, out detectedCarId, out otherAgentPosition);
+            distanceObservedObject = ObserveRay(rayDirections[i].Item1, rayDirections[i].Item2, rayDirections[i].Item3, out relativeSpeed, out tag, out detectedCarId, out otherAgentPosition);
             if (carAgent.needDistanceReward)
             {
-                distanceReward = rewardCalculation.CalculateDistanceReward(distance, carAgent.distanceReward[i], 0.2f);
+                distanceReward = rewardCalculation.CalculateDistanceReward(distanceObservedObject, carAgent.distanceReward[i], 0.2f);
                 carAgent.AddReward(distanceReward);
             }
-            observations.Add(distance);
-            observations.Add(diff.x);
-            observations.Add(diff.z);
+            observations.Add(distanceObservedObject);
+            observations.Add(relativeSpeed.x);
+            observations.Add(relativeSpeed.z);
             float carVerticalPosition = rayDirections[i].Item1;
             ObjectObservation(tag, detectedCarId, otherAgentPosition, ref observations, carVerticalPosition);
         }
-            observations.Add(carAgent.speed);
-            observations.Add(carAgent.torque);
+        observations.Add(carAgent.speed);
+        observations.Add(carAgent.torque);
 
-            return observations;
+        return observations;
         }
 
     public void ObjectObservation(string tag, int detectedCarId, Vector3 otherAgentPosition, ref List<float> observations, float carVerticalPosition)
@@ -102,9 +102,9 @@ public class AddObservations
         }
     }
 
-    private float ObserveRay(float z, float x, float angle, out Vector3 diff, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
+    private float ObserveRay(float z, float x, float angle, out Vector3 relativeSpeed, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
     {
-        diff = Vector3.zero;
+        relativeSpeed = Vector3.zero;
         tag = "none";
         detectedCarId = -1;
         otherAgentPosition = Vector3.zero;
@@ -134,7 +134,7 @@ public class AddObservations
                 detectedCarId = agent.id;
                 var self_dir = Quaternion.Euler(0, carAgent.torque * carAgent.prevHorizontal * 90f, 0) * (carAgent.transform.forward * carAgent.prevVertical * carAgent.speed);
                 var agent_dir = Quaternion.Euler(0, agent.torque * agent.prevHorizontal * 90f, 0) * (agent.transform.forward * agent.prevVertical * agent.speed);
-                diff = agent_dir - self_dir;
+                relativeSpeed = agent_dir - self_dir;
             }
         }
         return hit.distance >= 0 ? (hit.distance / carAgent.rayDistance) * Random.Range(1-carAgent.noise, 1+carAgent.noise) : -1f;
@@ -155,7 +155,7 @@ public class AddObservations
         }
     }
 
- private void removeOvertakenCarId(int detectedCarId)
+    private void removeOvertakenCarId(int detectedCarId)
     {
         if (carAgent.detectedFrontCarIdList.Contains(detectedCarId))
         {

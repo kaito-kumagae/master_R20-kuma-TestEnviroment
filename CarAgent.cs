@@ -76,7 +76,6 @@ public class CarAgent : Agent
     [HideInInspector]
     public bool foundCarForward, foundCarBackward, foundCarSide;
 
-
     public override void Initialize()
     {
         initialization = new Initialization(this);
@@ -113,7 +112,6 @@ public class CarAgent : Agent
         movement.MoveCar(horizontal, vertical, dt);
     }
     
-
     public override void OnActionReceived(float[] vectorAction)
     {
         if (generateNew)
