@@ -37,7 +37,7 @@ public class RewardCalculation
                 // move previous tile
                 if(newHitTile == carAgent._prev_track)
                 {
-                    individualReward = -1;
+                    individualReward = carAgent.movingPreviousTile;
                 }
                 // moving forward
                 else
@@ -71,7 +71,7 @@ public class RewardCalculation
                     // moving backward
                     else
                     {
-                        individualReward = -1;
+                        individualReward = carAgent.movingBackwardTile;
                     }
                 }
                 // if the tile's tag id "startTile"
@@ -84,7 +84,7 @@ public class RewardCalculation
             }
             else
             {
-                individualReward = -0.01f;
+                individualReward = carAgent.stayingSameTile;
             }
         }
         return individualReward;

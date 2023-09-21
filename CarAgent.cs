@@ -31,6 +31,9 @@ public class CarAgent : Agent
     public float distanceThreshold = 0.2f;
     public float[] distanceReward = new float[8];
     public float crashReward = -10f;
+    public float movingPreviousTile = -1f;
+    public float movingBackwardTile = -1f;
+    public float stayingSameTile = -0.01f;
     [Space(2)]
     [Header("GENERATE CAR")]
     public bool generateNew = true;
