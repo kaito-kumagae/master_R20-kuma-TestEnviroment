@@ -27,6 +27,7 @@ public class Crash : MonoBehaviour
             if (carAgent.countPassing == true)
             {
                 carAgent.detectedFrontCarIdList.Clear();
+                GetComponentInParent<UpdateCarParameters>().RemoveMyIdFromAllcarAgents(carAgent.id);
             }
 
             // If the collision was a car
