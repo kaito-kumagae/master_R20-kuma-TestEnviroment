@@ -41,7 +41,7 @@ public class Action
         vertical = Mathf.Clamp(vertical, -1.0f, 1.0f);
         horizontal = Mathf.Clamp(horizontal, -1.0f, 1.0f);
 
-        carAgent.MoveCar(horizontal, vertical, Time.fixedDeltaTime);
+        carAgent.movement.MoveCar(horizontal, vertical, Time.fixedDeltaTime);
 
         float individualReward = rewardCalculation.CalculateIndividualReward();
 

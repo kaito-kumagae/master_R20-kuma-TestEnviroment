@@ -8,7 +8,10 @@ using System.Linq;
 public class CarAgent : Agent
 {
     private Initialization initialization;
-    private Movement movement;
+    [HideInInspector]
+    public Movement movement;
+    [HideInInspector]
+    public RewardCalculation rewardCalculation;
     private Crash crash;
     private AddObservations addObservations;
     private Action action;
@@ -70,8 +73,6 @@ public class CarAgent : Agent
     [HideInInspector]
     public Transform _track, _prev_track;
     [HideInInspector]
-    public RewardCalculation rewardCalculation;
-    [HideInInspector]
     public Vector3 _initPosition;
     [HideInInspector]
     public Quaternion _initRotation;
@@ -108,11 +109,6 @@ public class CarAgent : Agent
             carInformation.currentCarNum++;
             time = 0;
         }
-    }
-
-    public void MoveCar(float horizontal, float vertical, float dt)
-    {
-        movement.MoveCar(horizontal, vertical, dt);
     }
     
     public override void OnActionReceived(float[] vectorAction)
