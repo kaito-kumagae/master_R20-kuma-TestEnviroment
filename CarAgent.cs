@@ -11,6 +11,7 @@ public class CarAgent : Agent
     private Movement movement;
     private Crash crash;
     private AddObservations addObservations;
+    private Action action;
 
     [Header("CAR PARAMETER")]
     public float speed = 10f;
@@ -61,8 +62,9 @@ public class CarAgent : Agent
     public float timer = 0;
     
     private Evaluator evaluator = Evaluator.getInstance();
-    private List<float> prev_observations;
-
+    
+    [HideInInspector]
+    public List<float> prev_observations;
     [HideInInspector]
     public int new_id = 0;
     [HideInInspector]
@@ -84,6 +86,7 @@ public class CarAgent : Agent
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
         crash.Initialize(this);
         addObservations = new AddObservations(this);
+        action = new Action(this);
         initialization.Initialize();
     }
 
@@ -107,63 +110,14 @@ public class CarAgent : Agent
         }
     }
 
-    private void MoveCar(float horizontal, float vertical, float dt)
+    public void MoveCar(float horizontal, float vertical, float dt)
     {
         movement.MoveCar(horizontal, vertical, dt);
     }
     
     public override void OnActionReceived(float[] vectorAction)
     {
-        if (generateNew)
-        {
-            time++;
-        }
-
-        if (id == 0)
-        {
-            carInformation.CarInformationController(stopTime, commonRewardInterval);
-        }
-
-        if (carInformation.rewardTime >= commonRewardInterval && canGetCommonReward)
-        {
-            float commonReward = rewardCalculation.CalculateCommonReward();
-            AddReward(commonReward);
-        }
-
-        if (carInformation.rewardTime < commonRewardInterval)
-        {
-            if (!canGetCommonReward)
-            {
-                canGetCommonReward = true;
-            }
-        }
-
-        float horizontal = vectorAction[0];
-        float vertical = vectorAction[1];
-        vertical = Mathf.Clamp(vertical, -1.0f, 1.0f);
-        horizontal = Mathf.Clamp(horizontal, -1.0f, 1.0f);
-
-        var lastPos = transform.position;
-        MoveCar(horizontal, vertical, Time.fixedDeltaTime);
-
-        float individualReward = rewardCalculation.CalculateIndividualReward();
-
-        var moveVec = transform.position - lastPos;
-        float angle = Vector3.Angle(moveVec, _track.forward);
-        float angleReward = rewardCalculation.CalculateAngleReward(moveVec, angle, vertical);
-
-        AddReward(individualReward + angleReward);
-
-        if (foundCarBackward && !foundCarSide)
-        {
-            evaluator.addBehavior(Time.realtimeSinceStartup, (int)speed, false, vectorAction);
-        }
-        if (foundCarForward && !foundCarSide)
-        {
-            evaluator.addBehavior(Time.realtimeSinceStartup, (int)speed, true, vectorAction);
-        }
-
-        evaluator.addFullData(Time.frameCount, transform.position, prev_observations, horizontal, vertical);
+        action.ActionProcess(vectorAction);
     }
 
     public override float[] Heuristic()
