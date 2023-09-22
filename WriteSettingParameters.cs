@@ -26,7 +26,10 @@ public class WriteSettingParameters : MonoBehaviour
         streamWriter.WriteLine("REWARD");
         streamWriter.WriteLine("needDistanceReward : " + carAgent.needDistanceReward.ToString());
         streamWriter.WriteLine("canGetCommonReward : " + carAgent.canGetCommonReward.ToString());
+        streamWriter.WriteLine("movingPreviousTileReward : " + carAgent.movingPreviousTileReward.ToString());
         streamWriter.WriteLine("movingForwardTileReward : " + carAgent.movingForwardTileReward.ToString());
+        streamWriter.WriteLine("movingBackwardTileReward : " + carAgent.movingBackwardTileReward.ToString());
+        streamWriter.WriteLine("stayingSameTileReward : " + carAgent.stayingSameTileReward.ToString());
         streamWriter.WriteLine("commonRewardRate : " + carAgent.commonRewardRate.ToString());
         streamWriter.WriteLine("distanceThreshold : " + carAgent.distanceThreshold.ToString());
         streamWriter.WriteLine("distanceReward(right forward) : " + carAgent.distanceReward[0].ToString());
