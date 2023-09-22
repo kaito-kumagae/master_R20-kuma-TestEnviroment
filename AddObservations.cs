@@ -18,7 +18,7 @@ public class AddObservations
     public List<float> MakeObservationsList()
     {
         List<float> observations = new List<float>();
-        float angle = Vector3.SignedAngle(carAgent._track.forward, carAgent.transform.forward, Vector3.up);
+        float angle = Vector3.SignedAngle(carAgent.currentTrack.forward, carAgent.transform.forward, Vector3.up);
         carAgent.foundCarBackward = false;
         carAgent.foundCarForward = false;
         carAgent.foundCarSide = false;
@@ -125,8 +125,8 @@ public class AddObservations
             {
                 CarAgent agent = hit.collider.gameObject.GetComponent(typeof(CarAgent)) as CarAgent;
                 detectedCarId = agent.id;
-                var selfDir = Quaternion.Euler(0, carAgent.torque * carAgent.prevHorizontal * 90f, 0) * (carAgent.transform.forward * carAgent.prevVertical * carAgent.speed);
-                var agentDir = Quaternion.Euler(0, agent.torque * agent.prevHorizontal * 90f, 0) * (agent.transform.forward * agent.prevVertical * agent.speed);
+                var selfDir = Quaternion.Euler(0, carAgent.torque * carAgent.previousHorizontal * 90f, 0) * (carAgent.transform.forward * carAgent.previousVertical * carAgent.speed);
+                var agentDir = Quaternion.Euler(0, agent.torque * agent.previousHorizontal * 90f, 0) * (agent.transform.forward * agent.previousVertical * agent.speed);
                 relativeSpeed = agentDir - selfDir;
             }
         }

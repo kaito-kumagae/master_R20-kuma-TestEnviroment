@@ -13,7 +13,7 @@ public class Initialization
 
     public void Initialize()
     {
-        carAgent.rewardCalculation.CalculateIndividualReward();
+        carAgent.trackRecognition.TrackRecognize();
         carAgent._initPosition = carAgent.transform.localPosition;
         carAgent._initRotation = carAgent.transform.localRotation;
         carAgent.time = 0;
