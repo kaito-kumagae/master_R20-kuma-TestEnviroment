@@ -18,7 +18,7 @@ public class AddObservations
     public List<float> MakeObservationsList()
     {
         List<float> observations = new List<float>();
-        float angle = Vector3.SignedAngle(carAgent._track.forward, carAgent.transform.forward, Vector3.up);
+        float angle = Vector3.SignedAngle(carAgent.currentTrack.forward, carAgent.transform.forward, Vector3.up);
         carAgent.foundCarBackward = false;
         carAgent.foundCarForward = false;
         carAgent.foundCarSide = false;

@@ -12,6 +12,8 @@ public class CarAgent : Agent
     public Movement movement;
     [HideInInspector]
     public RewardCalculation rewardCalculation;
+    [HideInInspector]
+    public TrackRecognition trackRecognition;
     private Crash crash;
     private AddObservations addObservations;
     private Action action;
@@ -30,7 +32,7 @@ public class CarAgent : Agent
     [Header("REWARD")]
     public bool needDistanceReward = true;
     public bool canGetCommonReward = true;
-    public int trackReward = 1;
+    public int movingForwardTileReward = 1;
     public float commonRewardRate = 1;
     public float distanceThreshold = 0.2f;
     public float[] distanceReward = new float[8];
@@ -74,18 +76,21 @@ public class CarAgent : Agent
     [HideInInspector]
     public int new_id = 0;
     [HideInInspector]
-    public Transform _track, _prev_track;
+    public Transform currentTrack, prevTrack;
     [HideInInspector]
     public Vector3 _initPosition;
     [HideInInspector]
     public Quaternion _initRotation;
     [HideInInspector]
     public bool foundCarForward, foundCarBackward, foundCarSide;
+    [HideInInspector]
+    public bool movePreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
 
     public override void Initialize()
     {
         initialization = new Initialization(this);
         movement = new Movement(this);
+        trackRecognition = new TrackRecognition(this);
         rewardCalculation = new RewardCalculation(this);
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
         crash.Initialize(this);

@@ -46,7 +46,7 @@ public class Action
         float individualReward = rewardCalculation.CalculateIndividualReward();
 
         var moveVec = carAgent.transform.position - lastPos;
-        float angle = Vector3.Angle(moveVec, carAgent._track.forward);
+        float angle = Vector3.Angle(moveVec, carAgent.currentTrack.forward);
         float angleReward = rewardCalculation.CalculateAngleReward(moveVec, angle, vertical);
 
         carAgent.AddReward(individualReward + angleReward);
