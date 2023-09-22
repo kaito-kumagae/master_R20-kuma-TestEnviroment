@@ -16,7 +16,7 @@ public class TrackRecognition
 
     public void TrackRecognize()
     {
-        carAgent.movePreviousTile = false;
+        carAgent.movingPreviousTile = false;
         carAgent.movingForwardTile = false;
         carAgent.movingBackwardTile = false;
         carAgent.stayingSameTile = false;
@@ -29,7 +29,7 @@ public class TrackRecognition
 
             if(carAgent.currentTrack == null)
             {
-                carAgent.prevTrack = carAgent.currentTrack;
+                carAgent.previousTrack = carAgent.currentTrack;
                 carAgent.currentTrack = newHitTile;
             }
             // move another tile
@@ -38,9 +38,9 @@ public class TrackRecognition
                 var relativePosition = carAgent.transform.position - newHitTile.position;
                 evaluator.addHorizontalSensor(Time.realtimeSinceStartup, relativePosition.x * newHitTile.forward.z - relativePosition.z * newHitTile.forward.x, relativePosition.x * newHitTile.forward.x - relativePosition.z * newHitTile.forward.z, carAgent.id, carAgent.speed);
                 // move previous tile
-                if(newHitTile == carAgent.prevTrack)
+                if(newHitTile == carAgent.previousTrack)
                 {
-                    carAgent.movePreviousTile = true;
+                    carAgent.movingPreviousTile = true;
                 }
                 // moving forward
                 else
@@ -82,7 +82,7 @@ public class TrackRecognition
                 {
                     evaluator.addThroughCars(Time.realtimeSinceStartup);
                 }
-                carAgent.prevTrack = carAgent.currentTrack;
+                carAgent.previousTrack = carAgent.currentTrack;
                 carAgent.currentTrack = newHitTile;
             }
             else

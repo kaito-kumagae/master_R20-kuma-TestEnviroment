@@ -23,8 +23,8 @@ public class CarAgent : Agent
     public float minSpeed = 5;
     public float maxSpeed = 15;
     public float torque = 1f;
-    public float prevVertical = 0f;
-    public float prevHorizontal = 0f;
+    public float previousVertical = 0f;
+    public float previousHorizontal = 0f;
     public int id = 0;
     public float noise = 0.1f;
     public float rayDistance = 5f;
@@ -72,11 +72,11 @@ public class CarAgent : Agent
     private Evaluator evaluator = Evaluator.getInstance();
     
     [HideInInspector]
-    public List<float> prev_observations;
+    public List<float> previousObservations;
     [HideInInspector]
     public int new_id = 0;
     [HideInInspector]
-    public Transform currentTrack, prevTrack;
+    public Transform currentTrack, previousTrack;
     [HideInInspector]
     public Vector3 _initPosition;
     [HideInInspector]
@@ -84,7 +84,7 @@ public class CarAgent : Agent
     [HideInInspector]
     public bool foundCarForward, foundCarBackward, foundCarSide;
     [HideInInspector]
-    public bool movePreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
+    public bool movingPreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
 
     public override void Initialize()
     {
@@ -139,7 +139,7 @@ public class CarAgent : Agent
         {
             vectorSensor.AddObservation(v);
         }
-        prev_observations = observations;
+        previousObservations = observations;
     }
 
     public override void OnEpisodeBegin()

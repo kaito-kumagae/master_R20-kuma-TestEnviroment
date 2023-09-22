@@ -59,6 +59,6 @@ public class Action
         {
             evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, true, vectorAction);
         }
-        evaluator.addFullData(Time.frameCount, carAgent.transform.position, carAgent.prev_observations, horizontal, vertical);
+        evaluator.addFullData(Time.frameCount, carAgent.transform.position, carAgent.previousObservations, horizontal, vertical);
     }
 }

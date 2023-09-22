@@ -19,7 +19,7 @@ public class RewardCalculation
     {
         float individualReward = 0.0f;
         carAgent.trackRecognition.TrackRecognize();
-        if (carAgent.movePreviousTile)
+        if (carAgent.movingPreviousTile)
         {
             individualReward = carAgent.movingPreviousTileReward;
         }

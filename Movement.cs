@@ -18,7 +18,7 @@ public class Movement
 
         float rotation = horizontal * carAgent.torque * 90f;
         carAgent.transform.Rotate(0f, rotation * dt, 0f);
-        carAgent.prevHorizontal = horizontal;
-        carAgent.prevVertical = vertical;
+        carAgent.previousHorizontal = horizontal;
+        carAgent.previousVertical = vertical;
     }
 }
