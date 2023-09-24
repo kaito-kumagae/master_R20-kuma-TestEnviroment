@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
 using System.IO;
 class Evaluator{
     public int ThroughCars{
@@ -92,11 +92,11 @@ class Evaluator{
         logFullData.Close();
     }
 
-    public void addBehavior(double time, double my_speed, bool foundCarForward, float[] vectorAction){
+    public void addBehavior(double time, double my_speed, bool foundCarForward, ActionBuffers actionBuffers){
         //Debug.Log("Crash cars: " + NumCrash.ToString() + " at " + Time.ToString());
         logBehavior = new StreamWriter("logBehavior.csv", true);
         logBehavior.Write(time.ToString() + "," + my_speed.ToString() + ",");
-        logBehavior.WriteLine(foundCarForward.ToString() + "," + vectorAction[0].ToString() + "," + vectorAction[1].ToString());
+        logBehavior.WriteLine(foundCarForward.ToString() + "," + actionBuffers.ContinuousActions[0].ToString() + "," + actionBuffers.ContinuousActions[1].ToString());
         logBehavior.Close();
 
     }

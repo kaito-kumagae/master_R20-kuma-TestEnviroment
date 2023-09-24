@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
 
 public class Action
 {
@@ -16,7 +20,7 @@ public class Action
         this.rewardCalculation = carAgent.rewardCalculation;
     }
 
-    public void ActionProcess(float[] vectorAction)
+    public void ActionProcess(ActionBuffers actionBuffers)
     {
         var lastPos = carAgent.transform.position;
 
@@ -36,8 +40,8 @@ public class Action
             carAgent.AddReward(commonReward);
         }
 
-        float horizontal = vectorAction[0];
-        float vertical = vectorAction[1];
+        float horizontal = actionBuffers.ContinuousActions[0];
+        float vertical = actionBuffers.ContinuousActions[1];
         vertical = Mathf.Clamp(vertical, -1.0f, 1.0f);
         horizontal = Mathf.Clamp(horizontal, -1.0f, 1.0f);
 
@@ -53,11 +57,11 @@ public class Action
 
         if (carAgent.foundCarBackward && !carAgent.foundCarSide)
         {
-            evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, false, vectorAction);
+            evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, false, actionBuffers);
         }
         if (carAgent.foundCarForward && !carAgent.foundCarSide)
         {
-            evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, true, vectorAction);
+            evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, true, actionBuffers);
         }
         evaluator.addFullData(Time.frameCount, carAgent.transform.position, carAgent.previousObservations, horizontal, vertical);
     }
