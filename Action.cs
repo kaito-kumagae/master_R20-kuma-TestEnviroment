@@ -39,6 +39,10 @@ public class Action
             float commonReward = rewardCalculation.CalculateCommonReward();
             carAgent.AddReward(commonReward);
         }
+        else if (!carAgent.canGetCommonReward && carInformation.rewardTime < carAgent.commonRewardInterval)
+        {
+            carAgent.canGetCommonReward = true;
+        }
 
         float horizontal = actionBuffers.ContinuousActions[0];
         float vertical = actionBuffers.ContinuousActions[1];
