@@ -87,6 +87,8 @@ public class CarAgent : Agent
     public bool foundCarForward, foundCarBackward, foundCarSide;
     [HideInInspector]
     public bool movingPreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
+    [HideInInspector]
+    public int startCarNum;
 
     public override void Initialize()
     {
@@ -99,16 +101,17 @@ public class CarAgent : Agent
         addObservations = new AddObservations(this);
         action = new Action(this);
         initialization.Initialize();
+        startCarNum = carInformation.currentCarNum;
     }
 
     void Update()
     {
         timer = Time.realtimeSinceStartup;
-        if (!generateNew || id > 1) return;
+        if (!generateNew || id > startCarNum - 1) return;
         if (time > generateInterval && carInformation.currentCarNum < limitCarNum)
         {
             var gameObject = Instantiate(this, _initPosition, _initRotation);
-            new_id += 2;
+            new_id += startCarNum;
             gameObject.id = new_id;
             gameObject.transform.parent = this.transform.parent.gameObject.transform;
             gameObject.transform.localPosition = _initPosition;
