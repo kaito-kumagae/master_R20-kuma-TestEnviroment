@@ -34,7 +34,7 @@ public class Crash : MonoBehaviour
             if (other.gameObject.CompareTag("car"))
             {
                 var otherAgent = (CarAgent)other.gameObject.GetComponent(typeof(CarAgent));
-                if ((carAgent.id < otherAgent.id) && (IsNot01(otherAgent.id)))
+                if ((carAgent.id < otherAgent.id) && (IsNotErasedId(otherAgent.id)))
                 {
                     if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f))
                     {
@@ -68,14 +68,16 @@ public class Crash : MonoBehaviour
     }
 
     // Prevent both cars from disappearing when cars with id0 and id1 collide
-    private bool IsNot01(int otherAgentId)
+    private bool IsNotErasedId(int otherAgentId)
     {
-        if ((carAgent.id == 0) || (carAgent.id == 1))
+        List<int> isNotErasedIdList = new List<int>();
+        for(int i = 0; i < carAgent.startCarNum; i++)
         {
-            if ((otherAgentId == 0) || (otherAgentId == 1))
-            {
-                return false;
-            }
+            isNotErasedIdList.Add(i);
+        }
+        if ((isNotErasedIdList.Contains(carAgent.id)) && (isNotErasedIdList.Contains(otherAgentId)))
+        {
+            return false;
         }
         return true;
     }
