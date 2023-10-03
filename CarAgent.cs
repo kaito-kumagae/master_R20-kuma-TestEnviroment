@@ -105,7 +105,7 @@ public class CarAgent : Agent
     void Update()
     {
         timer = Time.realtimeSinceStartup;
-        if (!generateNew || id > startCarNum) return;
+        if (!generateNew || id > startCarNum - 1) return;
         if (time > generateInterval && carInformation.currentCarNum < limitCarNum)
         {
             var gameObject = Instantiate(this, _initPosition, _initRotation);
