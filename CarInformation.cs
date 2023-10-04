@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CarInformation : MonoBehaviour
 {
-    public int currentCarNum = 0;
+    public int currentCarNum = 3;
+    public int startCarNum = 3;
     public int throughCarNum = 0;
     public int rewardTime = 0;
     public float commonReward = 0.0f;
