@@ -17,6 +17,6 @@ public class Initialization
         carAgent._initPosition = carAgent.transform.localPosition;
         carAgent._initRotation = carAgent.transform.localRotation;
         carAgent.time = 0;
-        carAgent.new_id = 0;
+        carAgent.new_id = carAgent.id;
     }
 }
