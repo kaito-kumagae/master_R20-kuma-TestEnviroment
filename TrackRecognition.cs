@@ -59,7 +59,7 @@ public class TrackRecognition
                         // if the tile's tag id "endTile"
                         if (hit.collider.tag == "endTile")
                         {
-                            carAgent.transform.localPosition = new Vector3(carAgent.transform.localPosition.x,0, 0);
+                            carAgent.transform.localPosition =carAgent._initPosition; //new Vector3(carAgent.transform.localPosition.x,0, 0);
                             if (carAgent.changeSpeed)
                             {
                                 carAgent.speed = Random.Range(carAgent.minSpeed, carAgent.maxSpeed+1);
