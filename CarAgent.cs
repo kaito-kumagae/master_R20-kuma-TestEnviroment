@@ -101,7 +101,7 @@ public class CarAgent : Agent
         addObservations = new AddObservations(this);
         action = new Action(this);
         initialization.Initialize();
-        startCarNum = carInformation.currentCarNum;
+        startCarNum = carInformation.startCarNum;
     }
 
     void Update()
