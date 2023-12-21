@@ -42,6 +42,10 @@ public class AddObservations
             (-1.5f, -.5f, -155f),// left backward
             (0f, .5f, 90f),      // right side
             (0f, -.5f, -90f)     // left side
+            //(0.75f, .5f, 57.5f), // right forward-side
+            //(0.75f, -.5f, -57.5f), // left forward-side
+            //(-0.75f, .5f, 122.5f), //right backward-side
+            //(-0.75f, .5f, -122.5f) //left backward-side
         };
 
         for (int i = 0; i < rayDirections.Length; i++)
