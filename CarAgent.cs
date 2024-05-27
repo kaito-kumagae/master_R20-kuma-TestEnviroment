@@ -18,6 +18,7 @@ public class CarAgent : Agent
     public TrackRecognition trackRecognition;
     private Crash crash;
     private AddObservations addObservations;
+    public SlipStream slipStream;
     private Action action;
 
     [Header("CAR PARAMETER")]
@@ -42,6 +43,7 @@ public class CarAgent : Agent
     public float movingPreviousTileReward = -1f;
     public float movingBackwardTileReward = -1f;
     public float stayingSameTileReward = -0.01f;
+    public float slipStreamReward  = 0;
     [Space(2)]
     [Header("GENERATE CAR")]
     public bool generateNew = true;
@@ -86,10 +88,13 @@ public class CarAgent : Agent
     [HideInInspector]
     public bool foundCarForward, foundCarBackward, foundCarSide;
     [HideInInspector]
+    public bool foundTruckBackward;
+    [HideInInspector]
     public bool movingPreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
     [HideInInspector]
     public int startCarNum;
-
+    [HideInInspector]
+     public bool isTruckCrashOnRespawnTile = false;
     public override void Initialize()
     {
         initialization = new Initialization(this);
@@ -99,6 +104,7 @@ public class CarAgent : Agent
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
         crash.Initialize(this);
         addObservations = new AddObservations(this);
+        slipStream = new SlipStream(this);
         action = new Action(this);
         initialization.Initialize();
         startCarNum = carInformation.startCarNum;
@@ -153,10 +159,10 @@ public class CarAgent : Agent
             transform.localPosition = _initPosition;
             transform.localRotation = _initRotation;
             this.speed = Random.Range(minSpeed, maxSpeed+1);
-            if (changeColor)
-            {
-                frame.GetComponent<ColorController>().ChangeColor(this.speed, maxSpeed, minSpeed);
-            }
+            // if (changeColor)
+            // {
+            //     frame.GetComponent<ColorController>().ChangeColor(this.speed, maxSpeed, minSpeed);
+            // }
         }
     }
 

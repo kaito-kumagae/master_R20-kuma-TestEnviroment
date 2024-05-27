@@ -60,9 +60,14 @@ public class RewardCalculation
         }
         return 0.0f;
     }
-
+    public float AddSlipStreamReward(float slipStreamReward)
+    {
+        return slipStreamReward;
+    }
     public void setCrashReward(float crashReward)
     {
         carAgent.SetReward(crashReward);
     }
+
+    
 }

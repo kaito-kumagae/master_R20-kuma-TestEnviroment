@@ -6,13 +6,15 @@ public class AddObservations
 {
     private CarAgent carAgent;
     private CarInformation carInformation;
-    private  RewardCalculation rewardCalculation;
+    private RewardCalculation rewardCalculation;
+    private SlipStream slipStream;
 
     public AddObservations(CarAgent carAgent)
     {
         this.carAgent = carAgent;
         this.carInformation = carAgent.carInformation;
         this.rewardCalculation = carAgent.rewardCalculation;
+        this.slipStream = carAgent.slipStream;
     }
 
     public List<float> MakeObservationsList()
@@ -21,6 +23,7 @@ public class AddObservations
         float angle = Vector3.SignedAngle(carAgent.currentTrack.forward, carAgent.transform.forward, Vector3.up);
         carAgent.foundCarBackward = false;
         carAgent.foundCarForward = false;
+        carAgent.foundTruckBackward = false;
         carAgent.foundCarSide = false;
 
         observations.Add(angle / 180f);
@@ -42,10 +45,10 @@ public class AddObservations
             (-1.5f, -.5f, -155f),// left backward
             (0f, .5f, 90f),      // right side
             (0f, -.5f, -90f),    // left side
-            (0.75f, .5f, 57.5f), // right forward-side
-            (0.75f, -.5f, -57.5f), // left forward-side
-            (-0.75f, .5f, 122.5f), //right backward-side
-            (-0.75f, .5f, -122.5f) //left backward-side
+            // (0.75f, .5f, 57.5f), // right forward-side
+            // (0.75f, -.5f, -57.5f), // left forward-side
+            // (-0.75f, .5f, 122.5f), //right backward-side
+            // (-0.75f, .5f, -122.5f) //left backward-side
         };
 
         for (int i = 0; i < rayDirections.Length; i++)
@@ -53,7 +56,7 @@ public class AddObservations
             distanceObservedObject = ObserveRay(rayDirections[i].Item1, rayDirections[i].Item2, rayDirections[i].Item3, out relativeSpeed, out tag, out detectedCarId, out otherAgentPosition);
             if (carAgent.needDistanceReward)
             {
-                distanceReward = rewardCalculation.CalculateDistanceReward(distanceObservedObject, carAgent.distanceReward[i], 0.2f);
+                distanceReward = rewardCalculation.CalculateDistanceReward(distanceObservedObject, carAgent.distanceReward[i], 0.2f); //要検討
                 carAgent.AddReward(distanceReward);
             }
             observations.Add(distanceObservedObject);
@@ -61,13 +64,26 @@ public class AddObservations
             observations.Add(relativeSpeed.z);
             float carVerticalPosition = rayDirections[i].Item1;
             ObjectObservation(tag, detectedCarId, otherAgentPosition, ref observations, carVerticalPosition);
+
+            if (rayDirections[i] == (1.5f, 0f, 0f))
+            {
+                TruckDetection(tag);
+            }
         }
         observations.Add(carAgent.speed);
         observations.Add(carAgent.torque);
 
         return observations;
     }
-
+    private void TruckDetection(string tag)
+    {
+        // トラック検知ロジックをここに追加します
+        if (tag == "TruckCar")
+        {
+            carAgent.foundTruckBackward = true; // 例: トラックを検知したことを示す
+            carAgent.slipStream.JudgeSlipStream(tag);
+        }
+    }
     private void ObjectObservation(string tag, int detectedCarId, Vector3 otherAgentPosition, ref List<float> observations, float carVerticalPosition)
     {   
         if (tag == "car")
