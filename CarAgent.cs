@@ -19,6 +19,8 @@ public class CarAgent : Agent
     private Crash crash;
     private AddObservations addObservations;
     private Action action;
+    public CalculateFuelDispersion calculateFuelDispersion;
+
 
     [Header("CAR PARAMETER")]
     public float speed = 10f;
@@ -42,6 +44,10 @@ public class CarAgent : Agent
     public float movingPreviousTileReward = -1f;
     public float movingBackwardTileReward = -1f;
     public float stayingSameTileReward = -0.01f;
+    public float fuelPenaltyRateSpeed10 = 0.0f;
+    public float fuelPenaltyRateSpeed9 = 0.0f;
+    public float fuelPenaltyRateSpeed8 = 0.0f;
+    public float fuelPenaltyRateSpeed7 = 0.0f;
     [Space(2)]
     [Header("GENERATE CAR")]
     public bool generateNew = true;
@@ -66,6 +72,8 @@ public class CarAgent : Agent
     [Space(2)]
     [Header("CAR INFORMATION")]
     public int commonRewardInterval = 500;
+    [Header("CAR FUEL INFORMATION")]
+    public int FuelRewardInterval = 500;
     [Space(2)]
     [Header("TEST PARAMETER")]
     public int stopTime = 5;
@@ -89,6 +97,11 @@ public class CarAgent : Agent
     public bool movingPreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
     [HideInInspector]
     public int startCarNum;
+    [HideInInspector]
+    public float fuelConsumption = 0f;
+    public float maxFuelConsumption = 0f;
+    public float minFuelConsumption = 0f;
+    
 
     public override void Initialize()
     {
@@ -101,6 +114,7 @@ public class CarAgent : Agent
         addObservations = new AddObservations(this);
         action = new Action(this);
         initialization.Initialize();
+        calculateFuelDispersion = new CalculateFuelDispersion(this);
         startCarNum = carInformation.startCarNum;
     }
 

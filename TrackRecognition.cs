@@ -69,6 +69,7 @@ public class TrackRecognition
                             {
                                 carAgent.detectedFrontCarIdList.Clear();
                             }
+                           carAgent.calculateFuelDispersion.CollectFuelConsumption();
                         }
                     }
                     // moving backward
@@ -81,6 +82,7 @@ public class TrackRecognition
                 if (newHitTile.GetComponent<Collider>().tag == "startTile")
                 {
                     evaluator.addThroughCars(Time.realtimeSinceStartup);
+                    carAgent.calculateFuelDispersion.ResetCarFuelConsumption();
                 }
                 carAgent.previousTrack = carAgent.currentTrack;
                 carAgent.currentTrack = newHitTile;

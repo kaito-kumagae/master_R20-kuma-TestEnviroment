@@ -38,6 +38,9 @@ public class Action
         {
             float commonReward = rewardCalculation.CalculateCommonReward();
             carAgent.AddReward(commonReward);
+            float FuelReward = rewardCalculation.CalculateFuelDispersionReward(carAgent.maxFuelConsumption,carAgent.minFuelConsumption);
+            Debug.Log("FuelReward" + FuelReward);
+            carAgent.AddReward(FuelReward);
         }
         else if (!carAgent.canGetCommonReward && carInformation.rewardTime < carAgent.commonRewardInterval)
         {
@@ -50,7 +53,7 @@ public class Action
         horizontal = Mathf.Clamp(horizontal, -1.0f, 1.0f);
 
         carAgent.movement.MoveCar(horizontal, vertical, Time.fixedDeltaTime);
-
+        carAgent.calculateFuelDispersion.CarFuelConsumption();
         float individualReward = rewardCalculation.CalculateIndividualReward();
 
         var moveVec = carAgent.transform.position - lastPos;

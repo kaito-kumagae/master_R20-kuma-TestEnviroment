@@ -61,6 +61,14 @@ public class RewardCalculation
         return 0.0f;
     }
 
+    public float CalculateFuelDispersionReward(float maxFuel,float minFuel)
+    {
+        float fuelDispersion = carAgent.maxFuelConsumption - carAgent.minFuelConsumption;
+        float fuelDispersionReward = 1 / (1 + fuelDispersion);
+        Debug.Log("fuelDispersionReward" + fuelDispersionReward);
+        return fuelDispersionReward;
+    }
+
     public void setCrashReward(float crashReward)
     {
         carAgent.SetReward(crashReward);
