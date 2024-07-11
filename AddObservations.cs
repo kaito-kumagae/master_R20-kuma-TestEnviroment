@@ -6,7 +6,7 @@ public class AddObservations
 {
     private CarAgent carAgent;
     private CarInformation carInformation;
-    private  RewardCalculation rewardCalculation;
+    private RewardCalculation rewardCalculation;
 
     public AddObservations(CarAgent carAgent)
     {
@@ -31,6 +31,7 @@ public class AddObservations
         Vector3 otherAgentPosition;
         float distanceObservedObject;
         float distanceReward;
+        float otherAgentFuelConsumption = 0.0f;
 
         (float, float, float)[] rayDirections = //ray
         {
@@ -50,7 +51,7 @@ public class AddObservations
 
         for (int i = 0; i < rayDirections.Length; i++)
         {
-            distanceObservedObject = ObserveRay(rayDirections[i].Item1, rayDirections[i].Item2, rayDirections[i].Item3, out relativeSpeed, out tag, out detectedCarId, out otherAgentPosition);
+            distanceObservedObject = ObserveRay(rayDirections[i].Item1, rayDirections[i].Item2, rayDirections[i].Item3, out relativeSpeed, out tag, out detectedCarId, out otherAgentPosition, out otherAgentFuelConsumption);
             if (carAgent.needDistanceReward)
             {
                 distanceReward = rewardCalculation.CalculateDistanceReward(distanceObservedObject, carAgent.distanceReward[i], 0.2f);
@@ -61,9 +62,24 @@ public class AddObservations
             observations.Add(relativeSpeed.z);
             float carVerticalPosition = rayDirections[i].Item1;
             ObjectObservation(tag, detectedCarId, otherAgentPosition, ref observations, carVerticalPosition);
+
+            // スリップストリームの条件をチェック
+            if (i == 1 && tag == "car" && Mathf.Abs(carAgent.transform.localPosition.x - otherAgentPosition.x) <= 1.0f)
+            {
+                carAgent.calculateFuelDispersion.SlipStreamDistanceReward(distanceObservedObject * carAgent.rayDistance); // 距離を引数として渡す
+                carAgent.SlipStreamReward = true;
+            }
+            else
+            {
+                carAgent.SlipStreamReward = false;
+            }
+
+            // 観測リストに相手の燃料消費量を追加
+            observations.Add(otherAgentFuelConsumption);
         }
         observations.Add(carAgent.speed);
         observations.Add(carAgent.torque);
+        observations.Add(carAgent.fuelConsumption);
 
         return observations;
     }
@@ -98,12 +114,13 @@ public class AddObservations
         observations.Add(tag == "wall" ? 1 : 0);
     }
 
-    private float ObserveRay(float z, float x, float angle, out Vector3 relativeSpeed, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
+    private float ObserveRay(float z, float x, float angle, out Vector3 relativeSpeed, out string tag, out int detectedCarId, out Vector3 otherAgentPosition, out float otherAgentFuelConsumption)
     {
         relativeSpeed = Vector3.zero;
         tag = "none";
         detectedCarId = -1;
         otherAgentPosition = Vector3.zero;
+        otherAgentFuelConsumption = 0.0f;
         var tf = carAgent.transform;
 
         // Get the start position of the ray
@@ -117,7 +134,7 @@ public class AddObservations
 
         // laser visualization
         Ray ray = new Ray(position, dir);
-        Debug.DrawRay(ray.origin, ray.direction*carAgent.rayDistance, Color.red);
+        Debug.DrawRay(ray.origin, ray.direction * carAgent.rayDistance, Color.red);
 
         // See if there is a hit in the given direction
         var rayHit = Physics.Raycast(position, dir, out hit, carAgent.rayDistance);
@@ -129,12 +146,13 @@ public class AddObservations
             {
                 CarAgent agent = hit.collider.gameObject.GetComponent(typeof(CarAgent)) as CarAgent;
                 detectedCarId = agent.id;
+                otherAgentFuelConsumption = agent.fuelConsumption; // 相手の燃料消費量を取得
                 var selfDir = Quaternion.Euler(0, carAgent.torque * carAgent.previousHorizontal * 90f, 0) * (carAgent.transform.forward * carAgent.previousVertical * carAgent.speed);
                 var agentDir = Quaternion.Euler(0, agent.torque * agent.previousHorizontal * 90f, 0) * (agent.transform.forward * agent.previousVertical * agent.speed);
                 relativeSpeed = agentDir - selfDir;
             }
         }
-        return hit.distance >= 0 ? (hit.distance / carAgent.rayDistance) * Random.Range(1-carAgent.noise, 1+carAgent.noise) : -1f;
+        return hit.distance >= 0 ? (hit.distance / carAgent.rayDistance) * Random.Range(1 - carAgent.noise, 1 + carAgent.noise) : -1f;
     }
 
     private void addOvertakingCarId(int detectedCarId, Vector3 otherAgentPosition)

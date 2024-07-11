@@ -17,7 +17,7 @@ public class CarAgent : Agent
     [HideInInspector]
     public TrackRecognition trackRecognition;
     private Crash crash;
-    private AddObservations addObservations;
+    public AddObservations addObservations;
     private Action action;
     public CalculateFuelDispersion calculateFuelDispersion;
 
@@ -36,6 +36,7 @@ public class CarAgent : Agent
     [Header("REWARD")]
     public bool needDistanceReward = true;
     public bool canGetCommonReward = true;
+    public bool SlipStreamReward = false;
     public int movingForwardTileReward = 1;
     public float commonRewardRate = 1;
     public float distanceThreshold = 0.2f;
@@ -48,6 +49,11 @@ public class CarAgent : Agent
     public float fuelPenaltyRateSpeed9 = 0.0f;
     public float fuelPenaltyRateSpeed8 = 0.0f;
     public float fuelPenaltyRateSpeed7 = 0.0f;
+    public float fuelSlipStreamReward10 = 0.0f;
+    public float fuelSlipStreamReward9 = 0.0f;
+    public float fuelSlipStreamReward8 = 0.0f;
+    public float fuelSlipStreamReward7 = 0.0f;
+    
     [Space(2)]
     [Header("GENERATE CAR")]
     public bool generateNew = true;
@@ -95,6 +101,7 @@ public class CarAgent : Agent
     public bool foundCarForward, foundCarBackward, foundCarSide;
     [HideInInspector]
     public bool movingPreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
+
     [HideInInspector]
     public int startCarNum;
     [HideInInspector]
