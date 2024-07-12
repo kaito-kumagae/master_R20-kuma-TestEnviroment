@@ -7,11 +7,14 @@ public class TrackRecognition
     private CarAgent carAgent;
     private CarInformation carInformation;
     private Evaluator evaluator = Evaluator.getInstance();
+    private CalculateFuelDispersion calculateFuelDispersion;
+
 
     public TrackRecognition(CarAgent carAgent)
     {
         this.carAgent = carAgent;
         this.carInformation = carAgent.carInformation;
+        this.calculateFuelDispersion = carAgent.calculateFuelDispersion;
     }
 
     public void TrackRecognize()
@@ -82,7 +85,6 @@ public class TrackRecognition
                 if (newHitTile.GetComponent<Collider>().tag == "startTile")
                 {
                     evaluator.addThroughCars(Time.realtimeSinceStartup);
-                    carAgent.calculateFuelDispersion.ResetCarFuelConsumption();
                 }
                 carAgent.previousTrack = carAgent.currentTrack;
                 carAgent.currentTrack = newHitTile;

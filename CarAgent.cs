@@ -174,6 +174,7 @@ public class CarAgent : Agent
             transform.localPosition = _initPosition;
             transform.localRotation = _initRotation;
             this.speed = Random.Range(minSpeed, maxSpeed+1);
+            calculateFuelDispersion.ResetCarFuelConsumption();
             if (changeColor)
             {
                 frame.GetComponent<ColorController>().ChangeColor(this.speed, maxSpeed, minSpeed);
