@@ -50,7 +50,7 @@ public class Action
         horizontal = Mathf.Clamp(horizontal, -1.0f, 1.0f);
 
         carAgent.movement.MoveCar(horizontal, vertical, Time.fixedDeltaTime);
-
+        carAgent.slipStream.judgeSlipStream();
         float individualReward = rewardCalculation.CalculateIndividualReward();
 
         var moveVec = carAgent.transform.position - lastPos;

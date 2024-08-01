@@ -17,9 +17,11 @@ public class CarAgent : Agent
     [HideInInspector]
     public TrackRecognition trackRecognition;
     public Communication communication;
+    public SlipStream slipStream;
     private Crash crash;
     private AddObservations addObservations;
     private Action action;
+    
     
 
     [Header("CAR PARAMETER")]
@@ -90,11 +92,16 @@ public class CarAgent : Agent
     [HideInInspector]
     public bool foundCarForward, foundCarBackward, foundCarSide;
     [HideInInspector]
+    public bool foundTrackForward;
+    [HideInInspector]
     public bool movingPreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
     [HideInInspector]
     public int startCarNum;
     [HideInInspector]
     public bool SlipStreamFrag = false;
+    //[HideInInspector]
+    public BoxCollider boxCol;
+    public GameObject cube;
 
     public override void Initialize()
     {
@@ -108,7 +115,9 @@ public class CarAgent : Agent
         communication = new Communication(this);
         action = new Action(this);
         initialization.Initialize();
+        slipStream = new SlipStream(this);
         startCarNum = carInformation.startCarNum;
+        //boxCol = this.gameObject.GetComponent<BoxCollider>();
     }
 
     void Update()

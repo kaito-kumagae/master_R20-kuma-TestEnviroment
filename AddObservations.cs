@@ -61,16 +61,15 @@ public class AddObservations
             observations.Add(relativeSpeed.z);
             float carVerticalPosition = rayDirections[i].Item1;
             ObjectObservation(tag, detectedCarId, otherAgentPosition, ref observations, carVerticalPosition);
+            if (i == 1 && tag == "TruckCar")
+            {
+                carAgent.foundTrackForward = true;
+                Debug.Log(carAgent.tag + " :carAgent.foundTrackForward: "+carAgent.foundTrackForward);
+            }
         }
         observations.Add(carAgent.speed);
         observations.Add(carAgent.torque);
-
-        // if (i == 1 && tag == "car" && Mathf.Abs(carAgent.transform.localPosition.x - otherAgentPosition.x) <= 1.0f)
-        // {
-            
-        // }
-
-        carAgent.communication.CommunicationCars(ref observations);
+        //carAgent.communication.CommunicationCars(ref observations);
         return observations;
     }
 
