@@ -63,7 +63,13 @@ public class TrackRecognition
                             if (carAgent.changeSpeed)
                             {
                                 carAgent.speed = Random.Range(carAgent.minSpeed, carAgent.maxSpeed+1);
-                                carAgent.frame.GetComponent<ColorController>().ChangeColor(carAgent.speed, carAgent.maxSpeed, carAgent.minSpeed);
+                                try 
+                                {
+                                    carAgent.frame.GetComponent<ColorController>().ChangeColor(carAgent.speed, carAgent.maxSpeed, carAgent.minSpeed);
+                                }
+                                catch 
+                                {
+                                }
                             }
                             if (carAgent.countPassing == true)
                             {

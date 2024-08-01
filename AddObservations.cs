@@ -65,9 +65,12 @@ public class AddObservations
         observations.Add(carAgent.speed);
         observations.Add(carAgent.torque);
 
-        if (i == 1 && tag == "car" && Mathf.Abs(carAgent.transform.localPosition.x - otherAgentPosition.x) <= 1.0f)
-        {
-        }
+        // if (i == 1 && tag == "car" && Mathf.Abs(carAgent.transform.localPosition.x - otherAgentPosition.x) <= 1.0f)
+        // {
+            
+        // }
+
+        carAgent.communication.CommunicationCars(ref observations);
         return observations;
     }
 

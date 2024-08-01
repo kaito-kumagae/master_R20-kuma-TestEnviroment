@@ -16,9 +16,11 @@ public class CarAgent : Agent
     public RewardCalculation rewardCalculation;
     [HideInInspector]
     public TrackRecognition trackRecognition;
+    public Communication communication;
     private Crash crash;
     private AddObservations addObservations;
     private Action action;
+    
 
     [Header("CAR PARAMETER")]
     public float speed = 10f;
@@ -30,6 +32,8 @@ public class CarAgent : Agent
     public int id = 0;
     public float noise = 0.1f;
     public float rayDistance = 5f;
+    public float communicateDistance = 100f;
+    public int communicationCarsNum = 1;
     [Space(2)]
     [Header("REWARD")]
     public bool needDistanceReward = true;
@@ -89,6 +93,8 @@ public class CarAgent : Agent
     public bool movingPreviousTile, movingForwardTile, movingBackwardTile, stayingSameTile;
     [HideInInspector]
     public int startCarNum;
+    [HideInInspector]
+    public bool SlipStreamFrag = false;
 
     public override void Initialize()
     {
@@ -99,6 +105,7 @@ public class CarAgent : Agent
         crash = gameObject.AddComponent(typeof(Crash)) as Crash;
         crash.Initialize(this);
         addObservations = new AddObservations(this);
+        communication = new Communication(this);
         action = new Action(this);
         initialization.Initialize();
         startCarNum = carInformation.startCarNum;
@@ -118,7 +125,13 @@ public class CarAgent : Agent
             gameObject.transform.localRotation = _initRotation;
             gameObject.speed = Random.Range(minSpeed, maxSpeed+1);
             gameObject.canGetCommonReward = true;
-            gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
+            try 
+            {
+                gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
+            }
+            catch 
+            {
+            }
             carInformation.currentCarNum++;
             time = 0;
         }
@@ -155,7 +168,13 @@ public class CarAgent : Agent
             this.speed = Random.Range(minSpeed, maxSpeed+1);
             if (changeColor)
             {
-                frame.GetComponent<ColorController>().ChangeColor(this.speed, maxSpeed, minSpeed);
+                try 
+                {
+                    frame.GetComponent<ColorController>().ChangeColor(this.speed, maxSpeed, minSpeed);
+                }
+                catch 
+                {
+                }
             }
         }
     }
