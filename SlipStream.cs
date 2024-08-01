@@ -35,7 +35,6 @@ public class SlipStream
                 (carAgent.tag == "car" && hit.tag == "car"))
             {
                 CarAgent otherAgent = hit.gameObject.GetComponent(typeof(CarAgent)) as CarAgent;
-                Debug.Log(hit.name + ": otherAgent.foundTrackForward: " + otherAgent.foundTrackForward);
                 if(otherAgent.foundTrackForward)
                 {
                     otherAgent.SlipStreamDistance = Vector3.Distance(carAgent.transform.localPosition, otherAgent.transform.localPosition);

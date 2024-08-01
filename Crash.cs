@@ -8,7 +8,7 @@ public class Crash : MonoBehaviour
     private Evaluator evaluator = Evaluator.getInstance();
     private CarInformation carInformation;
 
-    // Initialize member variables
+    // メンバー変数を初期化する
     public void Initialize(CarAgent carAgent)
     {
         this.carAgent = carAgent;
@@ -17,12 +17,26 @@ public class Crash : MonoBehaviour
 
     public void CrashProcess(Collision other)
     {
-        // If car have an accident
-        if (other.gameObject.CompareTag("wall") || other.gameObject.CompareTag("car"))
+        // 車が事故を起こした場合
+        if (other.gameObject.CompareTag("wall") || other.gameObject.CompareTag("car") || other.gameObject.CompareTag("TruckCar"))
         {
             var carCenter = carAgent.transform.position + Vector3.up;
+            RaycastHit hit;
 
-            carAgent.rewardCalculation.setCrashReward(carAgent.crashReward);
+            // 車がTruckRespawnTile上にあり、トラックとの衝突であるかを確認
+            if (Physics.Raycast(carCenter, Vector3.down, out hit, 2f))
+            {
+                var tile = hit.transform;
+                if (tile.CompareTag("TruckRespawn") && other.gameObject.CompareTag("TruckCar"))
+                {
+                    carAgent.rewardCalculation.setCrashReward(0);
+                }
+                else
+                {
+                    carAgent.rewardCalculation.setCrashReward(carAgent.crashReward);
+                }
+            }
+
             carAgent.EndEpisode();
             if (carAgent.countPassing == true)
             {
@@ -30,13 +44,13 @@ public class Crash : MonoBehaviour
                 GetComponentInParent<UpdateCarParameters>().RemoveMyIdFromAllcarAgents(carAgent.id);
             }
 
-            // If the collision was a car
-            if (other.gameObject.CompareTag("car"))
+            // 衝突が他の車との場合
+            if (other.gameObject.CompareTag("car") || other.gameObject.CompareTag("TrackCar"))
             {
                 var otherAgent = (CarAgent)other.gameObject.GetComponent(typeof(CarAgent));
                 if ((carAgent.id < otherAgent.id) && (IsNotErasedId(otherAgent.id)))
                 {
-                    if (Physics.Raycast(carCenter, Vector3.down, out var hit, 2f))
+                    if (Physics.Raycast(carCenter, Vector3.down, out hit, 2f))
                     {
                         var newHit = hit.transform;
                         if (newHit.GetComponent<Collider>().tag == "startTile")
@@ -49,10 +63,10 @@ public class Crash : MonoBehaviour
                         }
                         else
                         {
-                            evaluator.addCrashCars(Time.realtimeSinceStartup,carAgent.speed);
+                            evaluator.addCrashCars(Time.realtimeSinceStartup, carAgent.speed);
                             if (carAgent.generateNew)
                             {
-                                evaluator.addCrashCars(Time.realtimeSinceStartup,otherAgent.speed);
+                                evaluator.addCrashCars(Time.realtimeSinceStartup, otherAgent.speed);
                                 Destroy(other.gameObject);
                                 carInformation.currentCarNum--;
                             }
@@ -67,11 +81,11 @@ public class Crash : MonoBehaviour
         }
     }
 
-    // Prevent both cars from disappearing when cars with id0 and id1 collide
+    // id0とid1の車が衝突した場合に両方の車が消えるのを防ぐ
     private bool IsNotErasedId(int otherAgentId)
     {
         List<int> isNotErasedIdList = new List<int>();
-        for(int i = 0; i < carAgent.startCarNum; i++)
+        for (int i = 0; i < carAgent.startCarNum; i++)
         {
             isNotErasedIdList.Add(i);
         }

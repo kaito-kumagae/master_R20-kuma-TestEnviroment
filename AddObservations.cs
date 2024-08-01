@@ -69,6 +69,8 @@ public class AddObservations
         }
         observations.Add(carAgent.speed);
         observations.Add(carAgent.torque);
+        observations.Add(carAgent.tag == "car" ? 1 : 0);
+        observations.Add(carAgent.tag == "TrackCar" ? 1 : 0);
         //carAgent.communication.CommunicationCars(ref observations);
         return observations;
     }
@@ -101,6 +103,7 @@ public class AddObservations
 
         observations.Add(tag == "car" ? 1 : 0);
         observations.Add(tag == "wall" ? 1 : 0);
+        observations.Add(tag == "TrackCar" ? 1 : 0);
     }
 
     private float ObserveRay(float z, float x, float angle, out Vector3 relativeSpeed, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
@@ -108,11 +111,19 @@ public class AddObservations
         relativeSpeed = Vector3.zero;
         tag = "none";
         detectedCarId = -1;
+        float rayPositionY;
         otherAgentPosition = Vector3.zero;
         var tf = carAgent.transform;
 
         // Get the start position of the ray
-        var raySource = tf.position + Vector3.up / 2f;
+        if(carAgent.tag == "TrackCar")
+        {
+            rayPositionY = 2.0f;
+        }else
+        {
+            rayPositionY = 2.0f;
+        }
+        var raySource = tf.position + Vector3.up / rayPositionY;
         var position = raySource + tf.forward * z + tf.right * x;
 
         // Get the angle of the ray
