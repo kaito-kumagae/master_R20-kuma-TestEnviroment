@@ -21,7 +21,7 @@ public class RewardCalculation
         carAgent.trackRecognition.TrackRecognize();
         if (carAgent.movingPreviousTile)
         {
-            individualReward = carAgent.movingPreviousTileReward;
+            individualReward = carAgent.movingPreviousTileReward * carAgent.alpha;
         }
         else if (carAgent.movingForwardTile)
         {
@@ -59,6 +59,19 @@ public class RewardCalculation
             return distanceReward;
         }
         return 0.0f;
+    }
+
+    public float CalculateSlipStreamReward()
+    {
+        float slipStreamReward = 0.0f;
+        if(otherAgent.SlipStreamDistance != -1.0f)
+        {
+            if(carAgent.SlipStreamDistance <= 5.0f)
+            {
+                slipStreamReward = carAgent.slipStreamReward *(1-carAgent.alpha);
+            }
+        }
+        return slipStreamReward;
     }
 
     public void setCrashReward(float crashReward)

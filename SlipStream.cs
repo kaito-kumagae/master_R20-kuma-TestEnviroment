@@ -13,15 +13,10 @@ public class SlipStream
         this.rewardCalculation = carAgent.rewardCalculation;
         this.radius = carAgent.boxCol.size.z/2.0f*carAgent.transform.localScale.z+2.5f;
     }
-
-    public void SlipStream()
-    {
-        
-    }
     public void judgeSlipStream()
     {
         Vector3 centerPosition = carAgent.transform.position;
-        Quaternion carOrientation = carAgent.transform.rotation;//new Quaternion(0,0,0,0);
+        Quaternion carOrientation = carAgent.transform.rotation; //new Quaternion(0,0,0,0);
         Vector3 halfExtents = new Vector3(0.8f,0.5f,4.0f);
         Vector3 BoxCenterPosition = centerPositionBox(centerPosition);
         Collider[] hits = Physics.OverlapBox(BoxCenterPosition, halfExtents, carOrientation);
@@ -43,7 +38,7 @@ public class SlipStream
                 Debug.Log(hit.name + ": otherAgent.foundTrackForward: " + otherAgent.foundTrackForward);
                 if(otherAgent.foundTrackForward)
                 {
-                    otherAgent.SlipStreamFrag = true;
+                    otherAgent.SlipStreamDistance = Vector3.Distance(carAgent.transform.localPosition, otherAgent.transform.localPosition);
                 }
             }
         }
@@ -53,8 +48,6 @@ public class SlipStream
     {
         float angleY = carAgent.transform.eulerAngles.y+180f;
         float radians = angleY * Mathf.Deg2Rad;
-        // float x = centerPosition.x + radius * Mathf.Cos(radians);
-        // float z = centerPosition.z + radius * Mathf.Sin(radians);
         float x = centerPosition.x + radius * Mathf.Sin(radians);
         float z = centerPosition.z + radius * Mathf.Cos(radians);
         // float x = centerPosition.x*Mathf.cos(radians)-centerPosition.z*Mathf.sin(radians);

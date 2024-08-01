@@ -52,11 +52,11 @@ public class Action
         carAgent.movement.MoveCar(horizontal, vertical, Time.fixedDeltaTime);
         carAgent.slipStream.judgeSlipStream();
         float individualReward = rewardCalculation.CalculateIndividualReward();
-
+        float slipStreamReward = rewardCalculation.CalculateSlipStreamReward();
         var moveVec = carAgent.transform.position - lastPos;
         float angle = Vector3.Angle(moveVec, carAgent.currentTrack.forward);
         float angleReward = rewardCalculation.CalculateAngleReward(moveVec, angle, vertical);
-
+        carAgent.AddReward(slipStreamReward);
         carAgent.AddReward(individualReward + angleReward);
 
         if (carAgent.foundCarBackward && !carAgent.foundCarSide)

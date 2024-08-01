@@ -48,6 +48,7 @@ public class CarAgent : Agent
     public float movingPreviousTileReward = -1f;
     public float movingBackwardTileReward = -1f;
     public float stayingSameTileReward = -0.01f;
+    public float slipStreamReward = 0.003f;
     [Space(2)]
     [Header("GENERATE CAR")]
     public bool generateNew = true;
@@ -56,6 +57,7 @@ public class CarAgent : Agent
     [Space(2)]
     [Header("ENVIRONMENT PARAMETER")]
     public int limitCarNum = 300;
+    public float alpha = 0;
     [Space(2)]
     [Header("SWITCH")]
     public bool resetOnCollision = true;
@@ -98,7 +100,7 @@ public class CarAgent : Agent
     [HideInInspector]
     public int startCarNum;
     [HideInInspector]
-    public bool SlipStreamFrag = false;
+    public float SlipStreamDistance = -1.0f;
     //[HideInInspector]
     public BoxCollider boxCol;
     public GameObject cube;
@@ -117,7 +119,6 @@ public class CarAgent : Agent
         initialization.Initialize();
         slipStream = new SlipStream(this);
         startCarNum = carInformation.startCarNum;
-        //boxCol = this.gameObject.GetComponent<BoxCollider>();
     }
 
     void Update()
