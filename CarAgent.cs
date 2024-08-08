@@ -210,6 +210,6 @@ public class alphaBrainObservation
     public float stepTime;
     public int stopTime;
     public int GoalStepTime;
-    public tag 
+    public 
 
 }
