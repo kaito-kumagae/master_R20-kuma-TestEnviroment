@@ -136,7 +136,7 @@ public class CarAgent : Agent
             gameObject.transform.parent = this.transform.parent.gameObject.transform;
             gameObject.transform.localPosition = _initPosition;
             gameObject.transform.localRotation = _initRotation;
-            gameObject.speed = Random.Range(minSpeed, maxSpeed+1);
+            gameObject.speed = Random.Range(minSpeed, maxSpeed);
             gameObject.canGetCommonReward = true;
             gameObject.GoalStepTime = Random.Range(1401, 2036);
             if(alphaFlag)
@@ -183,7 +183,7 @@ public class CarAgent : Agent
         {
             transform.localPosition = _initPosition;
             transform.localRotation = _initRotation;
-            this.speed = Random.Range(minSpeed, maxSpeed+1);
+            this.speed = Random.Range(minSpeed, maxSpeed);
             if (changeColor)
             {
                 try 

@@ -62,7 +62,7 @@ public class TrackRecognition
                             carAgent.transform.localPosition =carAgent._initPosition; //new Vector3(carAgent.transform.localPosition.x,0, 0);
                             if (carAgent.changeSpeed)
                             {
-                                carAgent.speed = Random.Range(carAgent.minSpeed, carAgent.maxSpeed+1);
+                                carAgent.speed = Random.Range(carAgent.minSpeed, carAgent.maxSpeed);
                                 try 
                                 {
                                     carAgent.frame.GetComponent<ColorController>().ChangeColor(carAgent.speed, carAgent.maxSpeed, carAgent.minSpeed);
