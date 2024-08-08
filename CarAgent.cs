@@ -107,6 +107,7 @@ public class CarAgent : Agent
     public BoxCollider boxCol;
     public GameObject cube;
     
+    
 
     public override void Initialize()
     {
@@ -201,4 +202,14 @@ public class CarAgent : Agent
     {
         crash.CrashProcess(other);
     }
+}
+
+public class alphaBrainObservation
+{
+    public float speed;
+    public float stepTime;
+    public int stopTime;
+    public int GoalStepTime;
+    public tag 
+
 }
