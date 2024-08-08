@@ -66,7 +66,7 @@ public class Crash : MonoBehaviour
                             evaluator.addCrashCars(Time.realtimeSinceStartup, carAgent.speed);
                             if (carAgent.generateNew)
                             {
-                                evaluator.addCrashCars(Time.realtimeSinceStartup, otherAgent.speed);
+                                //evaluator.addCrashCars(Time.realtimeSinceStartup, otherAgent.speed);
                                 Destroy(other.gameObject);
                                 carInformation.currentCarNum--;
                             }
@@ -76,7 +76,7 @@ public class Crash : MonoBehaviour
             }
             else
             {
-                evaluator.addCrashCars(Time.realtimeSinceStartup, carAgent.speed);
+                //evaluator.addCrashCars(Time.realtimeSinceStartup, carAgent.speed);
             }
         }
     }

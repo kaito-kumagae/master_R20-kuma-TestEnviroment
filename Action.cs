@@ -62,12 +62,12 @@ public class Action
 
         if (carAgent.foundCarBackward && !carAgent.foundCarSide)
         {
-            evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, false, actionBuffers);
+            //evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, false, actionBuffers);
         }
         if (carAgent.foundCarForward && !carAgent.foundCarSide)
         {
-            evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, true, actionBuffers);
+            //evaluator.addBehavior(Time.realtimeSinceStartup, (int)carAgent.speed, true, actionBuffers);
         }
-        evaluator.addFullData(Time.frameCount, carAgent.transform.position, carAgent.previousObservations, horizontal, vertical);
+        //evaluator.addFullData(Time.frameCount, carAgent.transform.position, carAgent.previousObservations, horizontal, vertical);
     }
 }

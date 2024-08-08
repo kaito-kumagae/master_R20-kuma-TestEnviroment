@@ -36,7 +36,7 @@ public class TrackRecognition
             else if (newHitTile != carAgent.currentTrack)
             {
                 var relativePosition = carAgent.transform.position - newHitTile.position;
-                evaluator.addHorizontalSensor(Time.realtimeSinceStartup, relativePosition.x * newHitTile.forward.z - relativePosition.z * newHitTile.forward.x, relativePosition.x * newHitTile.forward.x - relativePosition.z * newHitTile.forward.z, carAgent.id, carAgent.speed);
+                //evaluator.addHorizontalSensor(Time.realtimeSinceStartup, relativePosition.x * newHitTile.forward.z - relativePosition.z * newHitTile.forward.x, relativePosition.x * newHitTile.forward.x - relativePosition.z * newHitTile.forward.z, carAgent.id, carAgent.speed);
                 // move previous tile
                 if(newHitTile == carAgent.previousTrack)
                 {
