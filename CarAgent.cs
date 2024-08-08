@@ -36,6 +36,7 @@ public class CarAgent : Agent
     public float rayDistance = 5f;
     public float communicateDistance = 100f;
     public int communicationCarsNum = 1;
+    public int GoalStepTime = 0;
     [Space(2)]
     [Header("REWARD")]
     public bool needDistanceReward = true;
@@ -57,12 +58,13 @@ public class CarAgent : Agent
     [Space(2)]
     [Header("ENVIRONMENT PARAMETER")]
     public int limitCarNum = 300;
-    public float alpha = 0;
+    public float alpha = 0.0f;
     [Space(2)]
     [Header("SWITCH")]
     public bool resetOnCollision = true;
     public bool changeColor = true;
     public bool changeSpeed = true;
+    public bool alphaFlag = true;
     [Space(2)]
     [Header("PASSING")]
     public bool countPassing = true;
@@ -73,14 +75,14 @@ public class CarAgent : Agent
     public CarInformation carInformation;
     [Space(2)]
     [Header("CAR INFORMATION")]
+    //public int loop = 0;
+    public int stepTime = 0;
     public int commonRewardInterval = 500;
     [Space(2)]
     [Header("TEST PARAMETER")]
     public int stopTime = 5;
     public float timer = 0;
-    
     private Evaluator evaluator = Evaluator.getInstance();
-    
     [HideInInspector]
     public List<float> previousObservations;
     [HideInInspector]
@@ -104,6 +106,7 @@ public class CarAgent : Agent
     //[HideInInspector]
     public BoxCollider boxCol;
     public GameObject cube;
+    
 
     public override void Initialize()
     {
@@ -135,6 +138,11 @@ public class CarAgent : Agent
             gameObject.transform.localRotation = _initRotation;
             gameObject.speed = Random.Range(minSpeed, maxSpeed+1);
             gameObject.canGetCommonReward = true;
+            gameObject.GoalStepTime = Random.Range(1401, 2036);
+            if(alphaFlag)
+            {
+                gameObject.alpha = Random.Range(0.0f, 1.0f);
+            }
             try 
             {
                 gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);

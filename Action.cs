@@ -23,7 +23,8 @@ public class Action
     public void ActionProcess(ActionBuffers actionBuffers)
     {
         var lastPos = carAgent.transform.position;
-
+        carAgent.stepTime++;
+        //Debug.Log("currentStepTime : " + carAgent.stepTime);
         if (carAgent.generateNew)
         {
             carAgent.time++;

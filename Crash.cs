@@ -45,7 +45,7 @@ public class Crash : MonoBehaviour
             }
 
             // 衝突が他の車との場合
-            if (other.gameObject.CompareTag("car") || other.gameObject.CompareTag("TrackCar"))
+            if (other.gameObject.CompareTag("car") || other.gameObject.CompareTag("TruckCar"))
             {
                 var otherAgent = (CarAgent)other.gameObject.GetComponent(typeof(CarAgent));
                 if ((carAgent.id < otherAgent.id) && (IsNotErasedId(otherAgent.id)))

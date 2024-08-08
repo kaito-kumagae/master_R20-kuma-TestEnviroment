@@ -6,7 +6,7 @@ public class AddObservations
 {
     private CarAgent carAgent;
     private CarInformation carInformation;
-    private  RewardCalculation rewardCalculation;
+    private RewardCalculation rewardCalculation;
 
     public AddObservations(CarAgent carAgent)
     {
@@ -24,7 +24,7 @@ public class AddObservations
         carAgent.foundCarSide = false;
 
         observations.Add(angle / 180f);
-        
+
         string tag;
         Vector3 relativeSpeed;
         int detectedCarId;
@@ -45,7 +45,7 @@ public class AddObservations
             (0.75f, .5f, 57.5f), // right forward-side
             (0.75f, -.5f, -57.5f), // left forward-side
             (-0.75f, .5f, 122.5f), //right backward-side
-            (-0.75f, .5f, -122.5f) //left backward-side
+            (-0.75f, -.5f, -122.5f) //left backward-side
         };
 
         for (int i = 0; i < rayDirections.Length; i++)
@@ -64,19 +64,22 @@ public class AddObservations
             if (i == 1 && tag == "TruckCar")
             {
                 carAgent.foundTrackForward = true;
-                Debug.Log(carAgent.tag + " :carAgent.foundTrackForward: "+carAgent.foundTrackForward);
+                //Debug.Log(carAgent.tag + " :carAgent.foundTrackForward: " + carAgent.foundTrackForward);
+            }else if(i == 1 && carAgent.tag == "car" && tag == "car")
+            {
+                carAgent.foundTrackForward = true;
             }
         }
         observations.Add(carAgent.speed);
         observations.Add(carAgent.torque);
         observations.Add(carAgent.tag == "car" ? 1 : 0);
-        observations.Add(carAgent.tag == "TrackCar" ? 1 : 0);
+        observations.Add(carAgent.tag == "TruckCar" ? 1 : 0);
         //carAgent.communication.CommunicationCars(ref observations);
         return observations;
     }
 
     private void ObjectObservation(string tag, int detectedCarId, Vector3 otherAgentPosition, ref List<float> observations, float carVerticalPosition)
-    {   
+    {
         if (tag == "car")
         {
             if (carVerticalPosition > 0)
@@ -98,12 +101,12 @@ public class AddObservations
             else
             {
                 carAgent.foundCarSide = true;
-            } 
+            }
         }
 
         observations.Add(tag == "car" ? 1 : 0);
         observations.Add(tag == "wall" ? 1 : 0);
-        observations.Add(tag == "TrackCar" ? 1 : 0);
+        observations.Add(tag == "TruckCar" ? 1 : 0);
     }
 
     private float ObserveRay(float z, float x, float angle, out Vector3 relativeSpeed, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
@@ -111,19 +114,19 @@ public class AddObservations
         relativeSpeed = Vector3.zero;
         tag = "none";
         detectedCarId = -1;
-        float rayPositionY;
+        Vector3 raySource; // 修正箇所: Vector3 を使うために new キーワードを使用
         otherAgentPosition = Vector3.zero;
         var tf = carAgent.transform;
 
         // Get the start position of the ray
-        if(carAgent.tag == "TrackCar")
+        if (carAgent.tag == "TruckCar")
         {
-            rayPositionY = 2.0f;
-        }else
-        {
-            rayPositionY = 2.0f;
+            raySource = tf.position + new Vector3(0f, 1.4f, 0f); // 修正箇所: new キーワードを追加
         }
-        var raySource = tf.position + Vector3.up / rayPositionY;
+        else
+        {
+            raySource = tf.position + Vector3.up / 2.0f;
+        }
         var position = raySource + tf.forward * z + tf.right * x;
 
         // Get the angle of the ray
@@ -133,7 +136,7 @@ public class AddObservations
 
         // laser visualization
         Ray ray = new Ray(position, dir);
-        Debug.DrawRay(ray.origin, ray.direction*carAgent.rayDistance, Color.red);
+        Debug.DrawRay(ray.origin, ray.direction * carAgent.rayDistance, Color.red);
 
         // See if there is a hit in the given direction
         var rayHit = Physics.Raycast(position, dir, out hit, carAgent.rayDistance);
@@ -150,7 +153,7 @@ public class AddObservations
                 relativeSpeed = agentDir - selfDir;
             }
         }
-        return hit.distance >= 0 ? (hit.distance / carAgent.rayDistance) * Random.Range(1-carAgent.noise, 1+carAgent.noise) : -1f;
+        return hit.distance >= 0 ? (hit.distance / carAgent.rayDistance) * Random.Range(1 - carAgent.noise, 1 + carAgent.noise) : -1f;
     }
 
     private void addOvertakingCarId(int detectedCarId, Vector3 otherAgentPosition)

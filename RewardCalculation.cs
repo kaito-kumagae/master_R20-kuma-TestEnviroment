@@ -64,6 +64,7 @@ public class RewardCalculation
     public float CalculateSlipStreamReward()
     {
         float slipStreamReward = 0.0f;
+        
         if(carAgent.SlipStreamDistance != -1.0f)
         {
             if(carAgent.SlipStreamDistance <= 5.0f)
