@@ -18,6 +18,7 @@ public class AddObservations
     public List<float> MakeObservationsList()
     {
         List<float> observations = new List<float>();
+        List<float> alphaObservations = new List<float>();
         float angle = Vector3.SignedAngle(carAgent.currentTrack.forward, carAgent.transform.forward, Vector3.up);
         carAgent.foundCarBackward = false;
         carAgent.foundCarForward = false;
@@ -72,9 +73,12 @@ public class AddObservations
         }
         observations.Add(carAgent.speed);
         observations.Add(carAgent.torque);
-        observations.Add(tag == "car" ? 1 : 0);
-        observations.Add(tag == "TruckCar" ? 1 : 0);
-        //carAgent.communication.CommunicationCars(ref observations);
+        observations.Add(carAgent.tag == "car" ? 1 : 0);
+        observations.Add(carAgent.tag == "TruckCar" ? 1 : 0);
+        alphaObservations.Add(carAgent.tag == "car" ? 1 : 0);
+        alphaObservations.Add(carAgent.tag == "TruckCar" ? 1 : 0);
+        carAgent.communication.CommunicationCars(ref observations);
+        carAgent.communication.CommunicationCars(ref alphaObservations);
         return observations;
     }
 
@@ -107,6 +111,7 @@ public class AddObservations
         observations.Add(tag == "car" ? 1 : 0);
         observations.Add(tag == "wall" ? 1 : 0);
         observations.Add(tag == "TruckCar" ? 1 : 0);
+        
     }
 
     private float ObserveRay(float z, float x, float angle, out Vector3 relativeSpeed, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
