@@ -26,12 +26,24 @@ public class BrainAlpha : Agent
     }
     public override void CollectObservations(VectorSensor vectorSensor)
     {
-        
-        foreach (var v in carAgent.alphaBrainObservation)
-        {
-            vectorSensor.AddObservation(v);
-        }
-        previousObservations = observations;
+        vectorSensor.AddObservation(carAgent.speed);
+        vectorSensor.AddObservation(carAgent.stepTime);
+        vectorSensor.AddObservation(carAgent.GoalStepTime);
+    }
+
+    private void OnEnable()
+    {
+        carAgent.rewardFlag += callSetReward;
+    }
+
+    private void OnDisable()
+    {
+        carAgent.rewardFlag -= callSetReward;
+    }
+
+    private void callSetReward(int flag)
+    {
+        SetReward(carAgent.rewardCalculation.CalculateStepDifferent())
     }
     // public override void OnEpisodeBegin()
     // {vectorSensor.AddObservation(v);

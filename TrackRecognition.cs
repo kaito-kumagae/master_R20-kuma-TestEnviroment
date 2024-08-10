@@ -75,6 +75,8 @@ public class TrackRecognition
                             {
                                 carAgent.detectedFrontCarIdList.Clear();
                             }
+                            carAgent.ActualArrivalTime = carAgent.stepTime;
+                            carAgent.rewardFlag?.Invoke(1);
                             carAgent.stepTime = 0;
                         }
                     }

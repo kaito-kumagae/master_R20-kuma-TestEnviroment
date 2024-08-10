@@ -75,6 +75,14 @@ public class RewardCalculation
         return slipStreamReward;
     }
 
+    public float CalculateStepDifferent()
+    {
+        int 
+        carAgent.
+
+        return 0 
+    }
+
     public void setCrashReward(float crashReward)
     {
         carAgent.SetReward(crashReward);

@@ -37,6 +37,7 @@ public class CarAgent : Agent
     public float communicateDistance = 100f;
     public int communicationCarsNum = 1;
     public int GoalStepTime = 0;
+    public int ActualArrivalTime = 0;
     [Space(2)]
     [Header("REWARD")]
     public bool needDistanceReward = true;
@@ -103,7 +104,10 @@ public class CarAgent : Agent
     public int startCarNum;
     [HideInInspector]
     public float SlipStreamDistance = -1.0f;
-    //[HideInInspector]
+    [HideInInspector]
+    private List<float> observations;
+    [HideInInspector]
+    public event Action<int> rewardFlag;
     public BoxCollider boxCol;
     public GameObject cube;
     
@@ -170,7 +174,7 @@ public class CarAgent : Agent
  
     public override void CollectObservations(VectorSensor vectorSensor)
     {
-        List<float> observations = addObservations.MakeObservationsList();
+        observations = addObservations.MakeObservationsList();
         foreach (var v in observations)
         {
             vectorSensor.AddObservation(v);
@@ -204,12 +208,3 @@ public class CarAgent : Agent
     }
 }
 
-public class alphaBrainObservation
-{
-    public float speed;
-    public float stepTime;
-    public int stopTime;
-    public int GoalStepTime;
-    public 
-
-}

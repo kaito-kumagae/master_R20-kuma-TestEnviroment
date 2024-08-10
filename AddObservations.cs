@@ -43,10 +43,10 @@ public class AddObservations
             (-1.5f, -.5f, -155f),// left backward
             (0f, .5f, 90f),      // right side
             (0f, -.5f, -90f),    // left side
-            // (0.75f, .5f, 57.5f), // right forward-side
-            // (0.75f, -.5f, -57.5f), // left forward-side
-            // (-0.75f, .5f, 122.5f), //right backward-side
-            // (-0.75f, -.5f, -122.5f) //left backward-side
+            (0.75f, .5f, 57.5f), // right forward-side
+            (0.75f, -.5f, -57.5f), // left forward-side
+            (-0.75f, .5f, 122.5f), //right backward-side
+            (-0.75f, -.5f, -122.5f) //left backward-side
         };
 
         for (int i = 0; i < rayDirections.Length; i++)
@@ -75,10 +75,7 @@ public class AddObservations
         observations.Add(carAgent.torque);
         observations.Add(carAgent.tag == "car" ? 1 : 0);
         observations.Add(carAgent.tag == "TruckCar" ? 1 : 0);
-        alphaObservations.Add(carAgent.tag == "car" ? 1 : 0);
-        alphaObservations.Add(carAgent.tag == "TruckCar" ? 1 : 0);
         carAgent.communication.CommunicationCars(ref observations);
-        carAgent.communication.CommunicationCars(ref alphaObservations);
         return observations;
     }
 
@@ -111,7 +108,6 @@ public class AddObservations
         observations.Add(tag == "car" ? 1 : 0);
         observations.Add(tag == "wall" ? 1 : 0);
         observations.Add(tag == "TruckCar" ? 1 : 0);
-        
     }
 
     private float ObserveRay(float z, float x, float angle, out Vector3 relativeSpeed, out string tag, out int detectedCarId, out Vector3 otherAgentPosition)
