@@ -69,6 +69,7 @@ public class RewardCalculation
         {
             if(carAgent.SlipStreamDistance <= 5.0f)
             {
+                Debug.Log(carAgent.tag +" : " + carAgent.slipStreamReward *(1-carAgent.alpha));
                 slipStreamReward = carAgent.slipStreamReward *(1-carAgent.alpha);
             }
         }

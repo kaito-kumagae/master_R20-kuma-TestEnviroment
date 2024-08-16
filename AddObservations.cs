@@ -74,7 +74,7 @@ public class AddObservations
         observations.Add(carAgent.torque);
         observations.Add(carAgent.tag == "car" ? 1 : 0);
         observations.Add(carAgent.tag == "TruckCar" ? 1 : 0);
-        //carAgent.communication.CommunicationCars(ref observations);
+        carAgent.communication.CommunicationCars(ref observations);
         return observations;
     }
 
