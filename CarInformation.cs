@@ -5,6 +5,7 @@ using UnityEngine;
 public class CarInformation : MonoBehaviour
 {
     public int currentCarNum = 0;
+    public int currentTruckNum = 0;
     public int startCarNum = 0;
     public int throughCarNum = 0;
     public int rewardTime = 0;

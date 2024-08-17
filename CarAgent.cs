@@ -58,6 +58,7 @@ public class CarAgent : Agent
     [Space(2)]
     [Header("ENVIRONMENT PARAMETER")]
     public int limitCarNum = 300;
+    public int limitTruckNum = 10;
     public float alpha = 0.0f;
     [Space(2)]
     [Header("SWITCH")]
@@ -130,28 +131,57 @@ public class CarAgent : Agent
         if (!generateNew || id > startCarNum - 1) return;
         if (time > generateInterval && carInformation.currentCarNum < limitCarNum)
         {
-            var gameObject = Instantiate(this, _initPosition, _initRotation);
-            new_id += startCarNum;
-            gameObject.id = new_id;
-            gameObject.transform.parent = this.transform.parent.gameObject.transform;
-            gameObject.transform.localPosition = _initPosition;
-            gameObject.transform.localRotation = _initRotation;
-            gameObject.speed = Random.Range(minSpeed, maxSpeed);
-            gameObject.canGetCommonReward = true;
-            gameObject.GoalStepTime = Random.Range(1401, 2036);
-            if(alphaFlag)
+            if(this.tag == "car" && carInformation.currentCarNum < limitCarNum)
             {
-                gameObject.alpha = Random.Range(0.0f, 1.0f);
+                var gameObject = Instantiate(this, _initPosition, _initRotation);
+                new_id += startCarNum;
+                gameObject.id = new_id;
+                gameObject.transform.parent = this.transform.parent.gameObject.transform;
+                gameObject.transform.localPosition = _initPosition;
+                gameObject.transform.localRotation = _initRotation;
+                gameObject.speed = Random.Range(minSpeed, maxSpeed);
+                gameObject.canGetCommonReward = true;
+                gameObject.GoalStepTime = Random.Range(1401, 2036);
+                if(alphaFlag)
+                {
+                    gameObject.alpha = Random.Range(0.0f, 1.0f);
+                }
+                try 
+                {
+                    gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
+                }
+                catch 
+                {
+                }
+                carInformation.currentCarNum++;
+                time = 0;
             }
-            try 
+            if(this.tag == "TruckCar" && carInformation.currentTruckNum < limitTruckNum)
             {
-                gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
+                var gameObject = Instantiate(this, _initPosition, _initRotation);
+                new_id += startCarNum;
+                gameObject.id = new_id;
+                gameObject.transform.parent = this.transform.parent.gameObject.transform;
+                gameObject.transform.localPosition = _initPosition;
+                gameObject.transform.localRotation = _initRotation;
+                gameObject.speed = Random.Range(minSpeed, maxSpeed);
+                gameObject.canGetCommonReward = true;
+                gameObject.GoalStepTime = Random.Range(1401, 2036);
+                if(alphaFlag)
+                {
+                    gameObject.alpha = Random.Range(0.0f, 1.0f);
+                }
+                try 
+                {
+                    gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
+                }
+                catch 
+                {
+                }
+                carInformation.currentCarNum++;
+                carInformation.currentTruckNum++;
+                time = 0;
             }
-            catch 
-            {
-            }
-            carInformation.currentCarNum++;
-            time = 0;
         }
     }
     
