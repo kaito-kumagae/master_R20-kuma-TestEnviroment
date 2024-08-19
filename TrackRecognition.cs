@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class TrackRecognition
 {
@@ -62,7 +63,7 @@ public class TrackRecognition
                             carAgent.transform.localPosition =carAgent._initPosition; //new Vector3(carAgent.transform.localPosition.x,0, 0);
                             if (carAgent.changeSpeed)
                             {
-                                carAgent.speed = Random.Range(carAgent.minSpeed, carAgent.maxSpeed);
+                                carAgent.speed = UnityEngine.Random.Range(carAgent.minSpeed, carAgent.maxSpeed);
                                 try 
                                 {
                                     carAgent.frame.GetComponent<ColorController>().ChangeColor(carAgent.speed, carAgent.maxSpeed, carAgent.minSpeed);
@@ -76,7 +77,7 @@ public class TrackRecognition
                                 carAgent.detectedFrontCarIdList.Clear();
                             }
                             carAgent.ActualArrivalTime = carAgent.stepTime;
-                            carAgent.rewardFlag?.Invoke(1);
+                            carAgent.brainAlpha.callSetReward();
                             carAgent.stepTime = 0;
                         }
                     }

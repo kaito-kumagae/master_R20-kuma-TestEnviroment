@@ -77,10 +77,19 @@ public class RewardCalculation
 
     public float CalculateStepDifferent()
     {
-        int 
-        carAgent.
+        int differentTime;
+        float differentTimeReward;
+        differentTime = carAgent.GoalStepTime - carAgent.ActualArrivalTime;
 
-        return 0 
+        if (differentTime <= -116 || differentTime >= 116)
+        {
+            differentTimeReward = -10f;
+        }
+        else
+        {
+            differentTimeReward = -0.00073365f * Mathf.Pow(Mathf.Abs(differentTime), 2) + 10f;
+        }
+        return differentTimeReward;
     }
 
     public void setCrashReward(float crashReward)

@@ -6,6 +6,8 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using System;
+
 
 public class CarAgent : Agent
 {
@@ -21,6 +23,7 @@ public class CarAgent : Agent
     private Crash crash;
     private AddObservations addObservations;
     private Action action;
+    public BrainAlpha brainAlpha;
     
     
 
@@ -107,7 +110,6 @@ public class CarAgent : Agent
     [HideInInspector]
     private List<float> observations;
     [HideInInspector]
-    public event Action<int> rewardFlag;
     public BoxCollider boxCol;
     public GameObject cube;
     
@@ -141,12 +143,12 @@ public class CarAgent : Agent
             gameObject.transform.parent = this.transform.parent.gameObject.transform;
             gameObject.transform.localPosition = _initPosition;
             gameObject.transform.localRotation = _initRotation;
-            gameObject.speed = Random.Range(minSpeed, maxSpeed);
+            gameObject.speed = UnityEngine.Random.Range(minSpeed, maxSpeed);
             gameObject.canGetCommonReward = true;
-            gameObject.GoalStepTime = Random.Range(1401, 2036);
+            gameObject.GoalStepTime = UnityEngine.Random.Range(1401, 2036);
             if(alphaFlag)
             {
-                gameObject.alpha = Random.Range(0.0f, 1.0f);
+                gameObject.alpha = UnityEngine.Random.Range(0.0f, 1.0f);
             }
             try 
             {
@@ -188,7 +190,7 @@ public class CarAgent : Agent
         {
             transform.localPosition = _initPosition;
             transform.localRotation = _initRotation;
-            this.speed = Random.Range(minSpeed, maxSpeed);
+            this.speed = UnityEngine.Random.Range(minSpeed, maxSpeed);
             if (changeColor)
             {
                 try 

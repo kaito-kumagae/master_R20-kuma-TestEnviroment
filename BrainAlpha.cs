@@ -5,6 +5,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using System;
 
 public class BrainAlpha : Agent
 {
@@ -31,19 +32,9 @@ public class BrainAlpha : Agent
         vectorSensor.AddObservation(carAgent.GoalStepTime);
     }
 
-    private void OnEnable()
+    public void callSetReward()
     {
-        carAgent.rewardFlag += callSetReward;
-    }
-
-    private void OnDisable()
-    {
-        carAgent.rewardFlag -= callSetReward;
-    }
-
-    private void callSetReward(int flag)
-    {
-        SetReward(carAgent.rewardCalculation.CalculateStepDifferent())
+        SetReward(carAgent.rewardCalculation.CalculateStepDifferent());
     }
     // public override void OnEpisodeBegin()
     // {vectorSensor.AddObservation(v);
