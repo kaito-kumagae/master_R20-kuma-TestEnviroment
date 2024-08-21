@@ -11,19 +11,17 @@ public class BrainAlpha : Agent
 {
     public CarAgent carAgent;
     public float alpha = 0.0f;
-    void Update()
-    {
-        
-    }
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         alpha = actionBuffers.ContinuousActions[0];
+        alpha = Mathf.Clamp(alpha,0f,1f);
         carAgent.alpha = alpha;
     }
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var continuousActionsOut = actionsOut.ContinuousActions;
         continuousActionsOut[0] = alpha;
+        Debug.Log("test : " + alpha);
     }
     public override void CollectObservations(VectorSensor vectorSensor)
     {
