@@ -63,7 +63,7 @@ public class CarAgent : Agent
     [Header("ENVIRONMENT PARAMETER")]
     public int limitCarNum = 300;
     public int limitTruckNum = 10;
-    public float alpha = 0.0f;
+    public float alpha;
     [Space(2)]
     [Header("SWITCH")]
     public bool resetOnCollision = true;
@@ -149,7 +149,7 @@ public class CarAgent : Agent
                 gameObject.transform.localRotation = _initRotation;
                 gameObject.speed = UnityEngine.Random.Range(minSpeed, maxSpeed);
                 gameObject.canGetCommonReward = true;
-                gameObject.GoalStepTime = UnityEngine.Random.Range(1401, 2036);
+                GoalStepTime = UnityEngine.Random.Range(1401, 2036);
                 Debug.Log("GoalStepTime : " + GoalStepTime);
                 if(alphaFlag)
                 {
@@ -175,7 +175,7 @@ public class CarAgent : Agent
                 gameObject.transform.localRotation = _initRotation;
                 gameObject.speed = UnityEngine.Random.Range(minSpeed, maxSpeed);
                 gameObject.canGetCommonReward = true;
-                gameObject.GoalStepTime = UnityEngine.Random.Range(1401, 2036);
+                GoalStepTime = UnityEngine.Random.Range(1401, 2036);
                 if(alphaFlag)
                 {
                     gameObject.alpha = UnityEngine.Random.Range(0.0f, 1.0f);

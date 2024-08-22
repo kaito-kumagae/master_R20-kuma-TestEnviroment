@@ -20,8 +20,8 @@ public class BrainAlpha : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var continuousActionsOut = actionsOut.ContinuousActions;
-        continuousActionsOut[0] = alpha;
-        Debug.Log("test : " + alpha);
+        //continuousActionsOut[0] = alpha;
+        //Debug.Log("test : " + alpha);
     }
     public override void CollectObservations(VectorSensor vectorSensor)
     {

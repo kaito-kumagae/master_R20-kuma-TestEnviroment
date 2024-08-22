@@ -94,13 +94,18 @@ public class RewardCalculation
         }
         else
         {
-            differentTimeReward = -0.00073365f * Mathf.Pow(Mathf.Abs(differentTime), 2) + 10f;
+            differentTimeReward = -0.00073365f * Mathf.Pow(Mathf.Abs(carAgent.differentTime), 2) + 10f;
         }
 
+        float tileIndex = Mathf.Floor(carAgent.transform.position.z / 10f); // 現在のタイルインデックス (0~28)
+        float exponent = (tileIndex + 1) / 29f;  // (1/29, 2/29, ..., 29/29)
+        float discountFactor = Mathf.Exp(exponent);  // exp(1/29), exp(2/29), ..., exp(29/29)
+        float finalReward = differentTimeReward * discountFactor;
+
         // デバッグ用出力
-        Debug.Log("remainingSteps : " + remainingSteps);
-        Debug.Log("differentTime : " + differentTime + ": step ");
-        Debug.Log("differentTimeReward : " + differentTimeReward);
+        // Debug.Log("remainingSteps : " + remainingSteps);
+        // Debug.Log("differentTime : " + carAgent.differentTime + ": step ");
+        // Debug.Log("differentTimeReward : " + differentTimeReward);
 
         return differentTimeReward;
     }
