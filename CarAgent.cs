@@ -114,6 +114,7 @@ public class CarAgent : Agent
     public BoxCollider boxCol;
     public GameObject cube;
     
+    public float differentTime = 0;
     
 
     public override void Initialize()
@@ -149,6 +150,7 @@ public class CarAgent : Agent
                 gameObject.speed = UnityEngine.Random.Range(minSpeed, maxSpeed);
                 gameObject.canGetCommonReward = true;
                 gameObject.GoalStepTime = UnityEngine.Random.Range(1401, 2036);
+                Debug.Log("GoalStepTime : " + GoalStepTime);
                 if(alphaFlag)
                 {
                     gameObject.alpha = UnityEngine.Random.Range(0.0f, 1.0f);

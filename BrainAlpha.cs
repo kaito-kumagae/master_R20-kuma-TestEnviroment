@@ -28,6 +28,8 @@ public class BrainAlpha : Agent
         vectorSensor.AddObservation(carAgent.speed);
         vectorSensor.AddObservation(carAgent.stepTime);
         vectorSensor.AddObservation(carAgent.GoalStepTime);
+        vectorSensor.AddObservation(carAgent.differentTime);
+        
     }
 
     public void callSetReward()
