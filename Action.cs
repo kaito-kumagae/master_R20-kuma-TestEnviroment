@@ -57,6 +57,7 @@ public class Action
         var moveVec = carAgent.transform.position - lastPos;
         float angle = Vector3.Angle(moveVec, carAgent.currentTrack.forward);
         float angleReward = rewardCalculation.CalculateAngleReward(moveVec, angle, vertical);
+        carAgent.brainAlpha.callSetReward();
         carAgent.AddReward(slipStreamReward);
         carAgent.AddReward(individualReward + angleReward);
 

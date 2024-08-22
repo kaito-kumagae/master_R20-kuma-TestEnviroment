@@ -77,11 +77,24 @@ public class RewardCalculation
 
     public float CalculateStepDifferent()
     {
-        int differentTime;
+        float differentTime;
         float differentTimeReward;
+        float endZ = 290f;
+        float speed = 10f;  // 10 tiles = 10m
+        float timePerStep = 0.02f;  // 1 step = 0.02s
+
+        // GoalStepTime: 目標到着ステップ数
+        // ActualArrivalTime: 実際の到着ステップ数
         differentTime = carAgent.GoalStepTime - carAgent.ActualArrivalTime;
 
-        if (differentTime <= -116 || differentTime >= 116)
+        float remainingDistance = endZ - carAgent.transform.position.z;  // 残りの距離
+        float remainingSteps = (remainingDistance / speed) / timePerStep;  // 残りのステップ数
+        
+        // ここで differentTime を再計算
+        differentTime = remainingSteps - (carAgent.stepTime + carAgent.GoalStepTime);
+        
+        // 報酬計算
+        if (differentTime <= -116f || differentTime >= 116f)
         {
             differentTimeReward = -10f;
         }
@@ -89,8 +102,15 @@ public class RewardCalculation
         {
             differentTimeReward = -0.00073365f * Mathf.Pow(Mathf.Abs(differentTime), 2) + 10f;
         }
+
+        // デバッグ用出力
+        Debug.Log("remainingSteps : " + remainingSteps);
+        Debug.Log("differentTime : " + differentTime + ": step ");
+        Debug.Log("differentTimeReward : " + differentTimeReward);
+
         return differentTimeReward;
     }
+
 
     public void setCrashReward(float crashReward)
     {
