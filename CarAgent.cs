@@ -145,6 +145,7 @@ public class CarAgent : Agent
                 if(alphaFlag)
                 {
                     gameObject.alpha = Random.Range(0.0f, 1.0f);
+                    Debug.Log("alpha : " + alpha);
                 }
                 try 
                 {
@@ -170,6 +171,7 @@ public class CarAgent : Agent
                 if(alphaFlag)
                 {
                     gameObject.alpha = Random.Range(0.0f, 1.0f);
+                    Debug.Log("alpha : " + alpha);
                 }
                 try 
                 {
