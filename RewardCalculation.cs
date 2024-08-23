@@ -6,7 +6,7 @@ using UnityEngine;
 public class RewardCalculation
 {
     private CarAgent carAgent;
-    private CarInformation carInformation;
+    private CarInformation carInformation;  
     private Evaluator evaluator = Evaluator.getInstance();
 
     public RewardCalculation(CarAgent carAgent)
@@ -85,7 +85,7 @@ public class RewardCalculation
         float remainingSteps = (remainingDistance / carAgent.speed) / timePerStep;  // 残りのステップ数
         
         // ここで differentTime を再計算
-        carAgent.differentTime = remainingSteps - (carAgent.stepTime + carAgent.GoalStepTime);
+        carAgent.differentTime = (carAgent.stepTime + remainingSteps) - carAgent.GoalStepTime;
         
         // 報酬計算
         if (carAgent.differentTime <= -116f || carAgent.differentTime >= 116f)
@@ -103,11 +103,11 @@ public class RewardCalculation
         float finalReward = differentTimeReward * discountFactor;
 
         // デバッグ用出力
-        // Debug.Log("remainingSteps : " + remainingSteps);
-        // Debug.Log("differentTime : " + carAgent.differentTime + ": step ");
-        // Debug.Log("differentTimeReward : " + differentTimeReward);
+         //Debug.Log("remainingSteps : " + remainingSteps);
+         //Debug.Log("differentTime : " + carAgent.differentTime + ": step ");
+         Debug.Log("finalReward : " + finalReward);
 
-        return differentTimeReward;
+        return finalReward;
     }
 
 

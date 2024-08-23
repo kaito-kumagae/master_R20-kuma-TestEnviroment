@@ -77,7 +77,8 @@ public class TrackRecognition
                                 carAgent.detectedFrontCarIdList.Clear();
                             }
                             carAgent.ActualArrivalTime = carAgent.stepTime;
-                            carAgent.brainAlpha.callSetReward();
+                            evaluator.addArrivalTimes(carAgent.tag, carAgent.ActualArrivalTime, carAgent.GoalStepTime);
+                            //carAgent.brainAlpha.callSetReward();
                             carAgent.stepTime = 0;
                         }
                     }

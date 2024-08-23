@@ -9,7 +9,7 @@ class Evaluator{
         private set;
     }
     private static Evaluator instance = null;
-    private StreamWriter logThroughput, logCrash, logDistance, logBehavior, logFullData;//, logRewar;
+    private StreamWriter logThroughput, logCrash, logDistance, logBehavior, logFullData, logArrivalTime;//, logRewar;
     private Evaluator(){
         ThroughCars = 0;
         NumCrash = 0;
@@ -34,6 +34,9 @@ class Evaluator{
         }
         logFullData.WriteLine("horizontal,vertical");
         logFullData.Close();
+        logBehavior = new StreamWriter("logArriValTime.csv");
+        logBehavior.WriteLine("Tag,ActualArrivalTime,GoalStepTime");
+        logBehavior.Close();
         // logReward = new StreamWriter("LogReward.csv");
         // logReward.WriteLine("time,id,reward,rewardCause");
         // logReward.Close();
@@ -59,6 +62,12 @@ class Evaluator{
         logThroughput.WriteLine(Time.ToString() + "," + ThroughCars.ToString());
         logThroughput.Close();
         return ThroughCars;
+    }
+    public void addArrivalTimes(string Tag,float ArrivalTime,float GoalStepTime)
+    {
+        logThroughput = new StreamWriter("logArrivalTime.csv", true);
+        logThroughput.WriteLine(Tag.ToString() + "," + ArrivalTime.ToString() + "," + GoalStepTime.ToString());
+        logThroughput.Close();
     }
 
     public int addCrashCars(double time, double my_speed){

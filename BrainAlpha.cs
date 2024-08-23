@@ -10,7 +10,7 @@ using System;
 public class BrainAlpha : Agent
 {
     public CarAgent carAgent;
-    public float alpha = 0.0f;
+    public float alpha = 0.5f;
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         alpha = actionBuffers.ContinuousActions[0];
@@ -29,7 +29,6 @@ public class BrainAlpha : Agent
         vectorSensor.AddObservation(carAgent.stepTime);
         vectorSensor.AddObservation(carAgent.GoalStepTime);
         vectorSensor.AddObservation(carAgent.differentTime);
-        
     }
 
     public void callSetReward()

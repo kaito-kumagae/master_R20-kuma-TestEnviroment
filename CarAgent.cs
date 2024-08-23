@@ -154,6 +154,7 @@ public class CarAgent : Agent
                 if(alphaFlag)
                 {
                     gameObject.alpha = UnityEngine.Random.Range(0.0f, 1.0f);
+                    //Debug.Log("alpha : " + gameObject.alpha);
                 }
                 try 
                 {
@@ -175,10 +176,12 @@ public class CarAgent : Agent
                 gameObject.transform.localRotation = _initRotation;
                 gameObject.speed = UnityEngine.Random.Range(minSpeed, maxSpeed);
                 gameObject.canGetCommonReward = true;
-                GoalStepTime = UnityEngine.Random.Range(1401, 2036);
+                //GoalStepTime = UnityEngine.Random.Range(1401, 2036);
+                GoalStepTime = 1401;
                 if(alphaFlag)
                 {
                     gameObject.alpha = UnityEngine.Random.Range(0.0f, 1.0f);
+                    //Debug.Log("alpha : " + gameObject.alpha);
                 }
                 try 
                 {
