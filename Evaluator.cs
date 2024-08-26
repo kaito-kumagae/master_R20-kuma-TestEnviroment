@@ -9,7 +9,7 @@ class Evaluator{
         private set;
     }
     private static Evaluator instance = null;
-    private StreamWriter logThroughput, logCrash, logDistance, logBehavior, logFullData;//, logRewar;
+    private StreamWriter logThroughput, logCrash, logDistance, logBehavior, logFullData, logSlipTime;//, logRewar;
     private Evaluator(){
         ThroughCars = 0;
         NumCrash = 0;
@@ -17,6 +17,9 @@ class Evaluator{
         //Must be changed for each environment.
         logThroughput = new StreamWriter("logThroughput.csv");
         logThroughput.WriteLine("time,num");
+        logThroughput.Close();
+        logThroughput = new StreamWriter("logSlipTime.csv");
+        logThroughput.WriteLine("alpha,SlipTime");
         logThroughput.Close();
         logCrash = new StreamWriter("logCrash.csv");
         logCrash.WriteLine("time,num,my_speed");
@@ -57,6 +60,13 @@ class Evaluator{
         //Debug.Log("Through cars: " + ThroughCars.ToString() + " at " + Time.ToString());
         logThroughput = new StreamWriter("logThroughput.csv", true);
         logThroughput.WriteLine(Time.ToString() + "," + ThroughCars.ToString());
+        logThroughput.Close();
+        return ThroughCars;
+    }
+    public int addSlipTime(float Alpha, float SlipTime){
+        
+        logThroughput = new StreamWriter("logSlipTime.csv", true);
+        logThroughput.WriteLine(Alpha.ToString() + "," + SlipTime.ToString());
         logThroughput.Close();
         return ThroughCars;
     }

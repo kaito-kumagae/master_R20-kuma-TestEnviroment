@@ -107,7 +107,7 @@ public class CarAgent : Agent
     //[HideInInspector]
     public BoxCollider boxCol;
     public GameObject cube;
-    
+    public float SlipStep;
 
     public override void Initialize()
     {

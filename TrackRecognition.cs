@@ -75,7 +75,9 @@ public class TrackRecognition
                             {
                                 carAgent.detectedFrontCarIdList.Clear();
                             }
+                            evaluator.addSlipTime(carAgent.alpha, carAgent.SlipStep);
                             carAgent.stepTime = 0;
+                            carAgent.SlipStep = 0;
                         }
                     }
                     // moving backward
