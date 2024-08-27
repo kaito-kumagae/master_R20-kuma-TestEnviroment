@@ -63,10 +63,10 @@ class Evaluator{
         logThroughput.Close();
         return ThroughCars;
     }
-    public int addSlipTime(float Alpha, float SlipTime){
+    public int addSlipTime(string Tag, float Alpha, float SlipTime){
         
         logThroughput = new StreamWriter("logSlipTime.csv", true);
-        logThroughput.WriteLine(Alpha.ToString() + "," + SlipTime.ToString());
+        logThroughput.WriteLine(Tag.ToString() + "," +Alpha.ToString() + "," + SlipTime.ToString());
         logThroughput.Close();
         return ThroughCars;
     }
